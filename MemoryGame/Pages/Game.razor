@@ -8,48 +8,48 @@
 
 <h3>Level:</h3>
 <select @bind="@Level">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
 </select>
 
 <h3>Type:</h3>
 <select @bind="@CardType">
-    <option value="Decimal">0-10</option>
-    <option value="Hexadecimal">0-15</option>
-    <option value="Alphabet">A-Z</option>
-    <option value="Images">Images</option>
+  <option value="Decimal">0-10</option>
+  <option value="Hexadecimal">0-15</option>
+  <option value="Alphabet">A-Z</option>
+  <option value="Images">Images</option>
 </select>
 
 <h3>Size:</h3>
 <select @bind="@Size">
-    <option value="4">4</option>
-    <option value="6">6</option>
-    <option value="8">8</option>
-    <option value="10">10</option>
+  <option value="4">4</option>
+  <option value="6">6</option>
+  <option value="8">8</option>
+  <option value="10">10</option>
 </select>
 
 <h3>
-    Time: <span>@TimeCounter</span>
+  Time: <span>@TimeCounter</span>
 </h3>
 
 <div class="board" style="width:@((64 * Size).ToString() + "px");height:@((64 * Size).ToString() + "px")">
-    @for (var i = 0; i < Size; i++)
+  @for (var i = 0; i < Size; i++)
+  {
+    @for (var j = 0; j < Size; j++)
     {
-        @for (var j = 0; j < Size; j++)
-        {
-            int x = i;
-            int y = j;
-            var card = gm.Cards.ElementAt(x * Size + y);
-            <div class="flip-card">
-                <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray")">@card.Text</div>
-                    <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
-                </div>
-            </div>
-        }
+      int x = i;
+      int y = j;
+      var card = gm.Cards.ElementAt(x * Size + y);
+      <div class="flip-card">
+        <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+          <div class="card-front" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray")">@card.Text</div>
+          <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
+        </div>
+      </div>
     }
+  }
 </div>
 
 <br />
@@ -57,132 +57,3 @@
 
 <br />
 <h3>Records:</h3>
-
-@code {
-
-    GameModel gm = new GameModel(1, 4, Models.CardType.Decimal);
-
-    bool LimitReached = false;
-
-    public int TimeCounter => gm.TimeCounter;
-
-    private System.Timers.Timer _t;
-
-    private int _level;
-
-    private int _size;
-
-    private CardType _cardType;
-
-    [Parameter]
-    public int Level 
-    {
-        get
-        {
-            return gm.Level;
-        }
-        set
-        {
-            Restart(value, Size, CardType);
-        } 
-    }
-
-    [Parameter]
-    public int Size 
-    {
-        get
-        {
-            return gm.BoardSize;
-        }
-        set
-        {
-            Restart(Level, value, CardType);
-        } 
-    }
-
-    [Parameter]
-    public string CardType 
-    {
-        get
-        {
-            return gm.CardType.ToString();    
-        }
-        set
-        {
-            Restart(Level, Size, value);
-        }
-    }
-
-    public void CardBackClicked(int row, int col)
-    {
-        if (!gm.Started)
-        {
-            gm.Started = true;
-            gm.GameTimer.Elapsed += this.GameTimerElapsed;
-            gm.GameTimer.Start();
-        }
-        if (LimitReached)
-        {
-            return;
-        }
-        gm.Cards.ElementAt(row * gm.BoardSize + col).Revealed = true;
-        LimitReached = gm.Match();
-        if (LimitReached)
-        {
-            gm.DelayTimer.Elapsed += this.DelayTimerElapesd;
-            gm.DelayTimer.Start();
-        }
-        if (gm.GameOver)
-        {
-            gm.GameTimer.Elapsed -= this.GameTimerElapsed;
-            gm.GameTimer.Stop();
-            gm.GameTimer.Dispose();
-        }
-        StateHasChanged();
-    }
-
-    public void Restart(int level, int size, string cardType)
-    {
-        gm.DelayTimer.Stop();
-        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-        gm.GameTimer.Elapsed -= this.GameTimerElapsed;
-        gm.GameTimer.Stop();
-        gm.DelayTimer.Dispose();
-        gm.GameTimer.Dispose();
-        var delay = gm.Cards.Any(c => c.Revealed || c.Matched) ? 1000 : 1;
-
-        gm.TurnBack();
-
-        _level = level;
-        _size = size;
-        Enum.TryParse(cardType, out _cardType);
-        _t = new System.Timers.Timer(delay);
-        _t.Elapsed += f;
-        _t.Start();
-        StateHasChanged();
-    }
-
-    void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
-        LimitReached = false;
-        gm.DelayTimer.Stop();
-        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-        StateHasChanged();
-    }
-
-    void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        gm.TimeCounter += 1;
-        StateHasChanged();
-    }
-
-    void f(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        _t.Elapsed -= f;
-        _t.Stop();
-        _t.Dispose();
-        gm.Restart(_level, _size, _cardType);
-        StateHasChanged();
-    }
-}

@@ -7,51 +7,32 @@ namespace MemoryGame.Models
 {
     public class GameModel
     {
-        /// <summary>
-        /// Game level 1 - 4
-        /// </summary>
-        public int Level { get; set; }
+        private Random _random = new Random(Environment.TickCount);
+        private List<string> _cards = new List<string>();
 
-        /// <summary>
-        /// The size of the game board (unit being the number of cards)
-        /// </summary>
-        public int BoardSize { get; set; }
+        public int Level { get; private set; }
 
-        public CardType CardType { get; set; }
+        public int BoardSize { get; private set; }
 
-        /// <summary>
-        /// The list of the cards
-        /// </summary>
-        public List<Card> Cards;
+        public CardType CardType { get; private set; }
 
-        /// <summary>
-        /// The number of cards allowed to reveal
-        /// </summary>
+        public List<Card> Cards { get; private set; }
+
         public int AllowToReveal => 6 - Level > 0 ? 6 - Level : 0;
 
-        /// <summary>
-        /// Game Timer
-        /// </summary>
         public int TimeCounter { get; set; }
 
-        public Timer DelayTimer { get; set; }
+        public Timer DelayTimer { get; private set; }
 
-        public Timer GameTimer { get; set; }
+        public Timer GameTimer { get; private set; }
 
-        /// <summary>
-        /// If the first click is made
-        /// </summary>
         public bool Started { get; set; }
 
         public bool GameOver => Cards.All(c => c.Matched == true);
 
-        private List<string> _cards = new List<string>();
-
-        private Random _random = new Random();
-
         public GameModel(int level, int size, CardType cardType)
         {
-            
+
             DelayTimer = new Timer(1000);
             GameTimer = new Timer(1000);
             Cards = new List<Card>();
@@ -69,7 +50,7 @@ namespace MemoryGame.Models
             Level = level;
             CardType = cardType;
             DelayTimer = new Timer(1000);
-            GameTimer = new Timer(1000); 
+            GameTimer = new Timer(1000);
             Cards = new List<Card>();
             TimeCounter = 0;
 
@@ -123,7 +104,7 @@ namespace MemoryGame.Models
             bool isMatched = false;
             var revealedCards = Cards.Where(c => c.Revealed && !c.Matched);
             var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text) != null);
-            if(matchedCards.Any())
+            if (matchedCards.Any())
             {
                 foreach (var card in matchedCards.ToList())
                 {
@@ -147,43 +128,5 @@ namespace MemoryGame.Models
                 list[n] = value;
             }
         }
-    }
-
-    public class Card
-    {
-        /// <summary>
-        /// Text on the card
-        /// </summary>
-        public string Text { get; set; }
-
-        /// <summary>
-        /// If the card has been revealed
-        /// </summary>
-        public bool Revealed { get; set; }
-
-        /// <summary>
-        /// The card has already been matched
-        /// </summary>
-        public bool Matched { get; set; }
-
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="Text">Card Text</param>
-        public Card(string text, string image = "")
-        {
-            this.Text = text;
-            this.Revealed = false;
-            this.Matched = false;
-        }
-    }
-
-    public enum CardType
-    {
-        Decimal,
-        Hexadecimal,
-        Alphabet,
-        Images
     }
 }
