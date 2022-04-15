@@ -1,4 +1,7 @@
-﻿namespace MemoryGame.Models
+﻿using System.Linq;
+using System.Collections.Generic;
+
+namespace MemoryGame.Models
 {
     public class GameModel
     {
@@ -15,7 +18,7 @@
         /// <summary>
         /// The list of the cards
         /// </summary>
-        public List<Card> CardList = new List<Card>();
+        public List<Card> Cards = new List<Card>();
 
         /// <summary>
         /// The number of cards allowed to reveal
@@ -58,14 +61,29 @@
                 {
                     var card = cardPool.First();
                     cardPool.Remove(card);
-                    CardList.Add(new Card(card));
+                    Cards.Add(new Card(card));
                 }
             }
         }
 
-        public bool MatchIsFound()
+        public bool Match()
         {
-            return false;
+            var revealedCards = Cards.Where(c => c.Revealed);
+            var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text) != null);
+            if(matchedCards.Any())
+            {
+                foreach (var card in matchedCards.ToList())
+                {
+                    card.Matched = true;
+                }
+            }
+
+            return revealedCards.Count() == AllowToReveal;
+        }
+
+        public bool GameOver()
+        {
+            return Cards.All(c => c.Matched == true);
         }
 
         private void Shuffle(List<string> list)

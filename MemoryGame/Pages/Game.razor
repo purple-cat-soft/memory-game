@@ -18,9 +18,9 @@
             int x = i;
             int y = j;
             <div class="flip-card">
-                <div class="flip-card-inner" style=@(gm.CardList.ElementAt(i * gm.BoardSize + j).Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                <div class="card-front" id="card-front-@(x)-@(y)">@gm.CardList.ElementAt(i * gm.BoardSize + j).Text</div>
-                <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
+                <div class="flip-card-inner" style=@(gm.Cards.ElementAt(i * gm.BoardSize + j).Revealed || gm.Cards.ElementAt(i * gm.BoardSize + j).Matched ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+                    <div class="card-front" id="card-front-@(x)-@(y)">@gm.Cards.ElementAt(i * gm.BoardSize + j).Text</div>
+                    <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
                 </div>
             </div>
         }
@@ -31,12 +31,34 @@
 
     GameModel gm = new GameModel();
 
+    bool LimitReached = false;
+    System.Timers.Timer t;
+
     public void CardBackClicked(int row, int col)
     {
-        gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed = true;
+        if (LimitReached)
+        {
+            return;
+        }
+        gm.Cards.ElementAt(row * gm.BoardSize + col).Revealed = true;
+        LimitReached = gm.Match();
+        if (LimitReached)
+        {
+            t = new System.Timers.Timer(1000);
+            t.Elapsed += new System.Timers.ElapsedEventHandler(f);
+            t.Start();
+        }
         StateHasChanged();
     }
 
-    
-
+    void f(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        foreach(var card in gm.Cards)
+        {
+            card.Revealed = false;
+        }
+        LimitReached = false;
+        StateHasChanged();
+        t.Stop();    
+    }
 }
