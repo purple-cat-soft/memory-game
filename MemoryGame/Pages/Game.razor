@@ -1,0 +1,36 @@
+﻿@page "/"
+@page "/index"
+@using MemoryGame.Models
+
+<PageTitle>Memory Game</PageTitle>
+
+<h1>Memory Game</h1>
+
+<h3>Level:<span id="level"></span></h3>
+
+
+
+<div class="board">
+    @for (var i = 0; i < gm.BoardSize; i++)
+    {
+        @for (var j = 0; j < gm.BoardSize; j++)
+        {
+            @*<div class="card" style="display:none" id="card-@(i)-@(j)">@gm.CardList.ElementAt(rnd.Next(gm.CardList.Count))</div>*@
+            int x = i;
+            int y = j;
+            <div class=@(gm.CardList.ElementAt(i * gm.BoardSize + j).Revealed ? "card": "cardback") id="card-@(i)-@(j)" @onclick="@(() => CardBackClicked(x, y))">@gm.CardList.ElementAt(i * gm.BoardSize + j).Text</div>
+        }
+    }
+</div>
+
+@code {
+
+    GameModel gm = new GameModel();
+
+    public void CardBackClicked(int row, int col)
+    {
+        gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed = !gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed;
+        StateHasChanged();
+    }
+
+}
