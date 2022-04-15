@@ -6,7 +6,13 @@
 
 <h1>Memory Game</h1>
 
-<h3>Level:<span id="level">@gm.Level</span></h3>
+<h3>Level:</h3>
+<select @bind="@Level">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+</select>
 
 
 
@@ -32,7 +38,20 @@
     GameModel gm = new GameModel();
 
     bool LimitReached = false;
-    System.Timers.Timer t;
+    System.Timers.Timer t = new System.Timers.Timer(1000);
+
+    [Parameter]
+    public int Level 
+    {
+        get
+        {
+            return gm.Level;
+        }
+        set
+        {
+            gm.Level = value;
+        } 
+    }
 
     public void CardBackClicked(int row, int col)
     {
@@ -44,14 +63,13 @@
         LimitReached = gm.Match();
         if (LimitReached)
         {
-            t = new System.Timers.Timer(1000);
-            t.Elapsed += new System.Timers.ElapsedEventHandler(f);
+            t.Elapsed += this.f;
             t.Start();
         }
         StateHasChanged();
     }
 
-    void f(object sender, System.Timers.ElapsedEventArgs e)
+    void f(object? sender, System.Timers.ElapsedEventArgs e)
     {
         foreach(var card in gm.Cards)
         {
@@ -59,6 +77,7 @@
         }
         LimitReached = false;
         StateHasChanged();
-        t.Stop();    
+        t.Stop();
+        t.Elapsed -= this.f;
     }
 }
