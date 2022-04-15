@@ -6,7 +6,7 @@
 
 <h1>Memory Game</h1>
 
-<h3>Level:<span id="level"></span></h3>
+<h3>Level:<span id="level">@gm.Level</span></h3>
 
 
 
@@ -15,10 +15,14 @@
     {
         @for (var j = 0; j < gm.BoardSize; j++)
         {
-            @*<div class="card" style="display:none" id="card-@(i)-@(j)">@gm.CardList.ElementAt(rnd.Next(gm.CardList.Count))</div>*@
             int x = i;
             int y = j;
-            <div class=@(gm.CardList.ElementAt(i * gm.BoardSize + j).Revealed ? "card": "cardback") id="card-@(i)-@(j)" @onclick="@(() => CardBackClicked(x, y))">@gm.CardList.ElementAt(i * gm.BoardSize + j).Text</div>
+            <div class="flip-card">
+                <div class="flip-card-inner" style=@(gm.CardList.ElementAt(i * gm.BoardSize + j).Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+                <div class="card-front" id="card-front-@(x)-@(y)">@gm.CardList.ElementAt(i * gm.BoardSize + j).Text</div>
+                <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
+                </div>
+            </div>
         }
     }
 </div>
@@ -29,8 +33,10 @@
 
     public void CardBackClicked(int row, int col)
     {
-        gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed = !gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed;
+        gm.CardList.ElementAt(row * gm.BoardSize + col).Revealed = true;
         StateHasChanged();
     }
+
+    
 
 }
