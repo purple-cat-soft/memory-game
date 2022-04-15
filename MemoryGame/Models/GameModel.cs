@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace MemoryGame.Models
 {
@@ -18,19 +20,34 @@ namespace MemoryGame.Models
         /// <summary>
         /// The list of the cards
         /// </summary>
-        public List<Card> Cards = new List<Card>();
+        public List<Card> Cards;
 
         /// <summary>
         /// The number of cards allowed to reveal
         /// </summary>
         public int AllowToReveal => 6 - Level > 0 ? 6 - Level : 0;
 
-        private string[] _cards = new string[42];
+        /// <summary>
+        /// Game Timer
+        /// </summary>
+        public int TimeCounter { get; set; }
 
+        public Timer DelayTimer { get; set; }
+
+        public Timer GameTimer { get; set; }
+
+        /// <summary>
+        /// If the first click is made
+        /// </summary>
+        public bool Started { get; set; }
+
+        public bool GameOver => Cards.All(c => c.Matched == true);
+
+        private string[] _cards = new string[42];
 
         private Random _random = new Random();
 
-        public GameModel()
+        public GameModel(int level, int size)
         {
             for (var i = 0; i < 16; i++)
             {
@@ -40,13 +57,28 @@ namespace MemoryGame.Models
             {
                 _cards[16 + i] = char.ConvertFromUtf32((int)('A') + i);
             }
+            DelayTimer = new Timer(1000);
+            GameTimer = new Timer(1000);
+            Cards = new List<Card>();
+            Restart(level, size);
+        }
 
-            BoardSize = 4;
-            Level = 1;
+        public void TurnBack()
+        {
+            Cards.ForEach(c => c.Revealed = false);
+            Cards.ForEach(c => c.Matched = false);
+        }
+
+        public void Restart(int level, int size)
+        {
+            BoardSize = size;
+            Level = level;
+            Cards = new List<Card>();
+            TimeCounter = 0;
 
             var cardPool = new List<string>();
 
-            for (var i = 0; i < BoardSize * BoardSize / 2; i++ )
+            for (var i = 0; i < BoardSize * BoardSize / 2; i++)
             {
                 var card = _cards[_random.Next(42)];
                 cardPool.Add(card);
@@ -79,11 +111,6 @@ namespace MemoryGame.Models
             }
 
             return revealedCards.Count() == AllowToReveal;
-        }
-
-        public bool GameOver()
-        {
-            return Cards.All(c => c.Matched == true);
         }
 
         private void Shuffle(List<string> list)

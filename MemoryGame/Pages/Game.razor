@@ -14,18 +14,28 @@
     <option value="4">4</option>
 </select>
 
+<h3>Size:</h3>
+<select @bind="@Size">
+    <option value="4">4</option>
+    <option value="6">6</option>
+    <option value="8">8</option>
+    <option value="10">10</option>
+</select>
 
+<h3>
+    Time: <span>@TimeCounter</span>
+</h3>
 
-<div class="board">
-    @for (var i = 0; i < gm.BoardSize; i++)
+<div class="board" style="width:@((64 * Size).ToString() + "px");height:@((64 * Size).ToString() + "px")">
+    @for (var i = 0; i < Size; i++)
     {
-        @for (var j = 0; j < gm.BoardSize; j++)
+        @for (var j = 0; j < Size; j++)
         {
             int x = i;
             int y = j;
             <div class="flip-card">
-                <div class="flip-card-inner" style=@(gm.Cards.ElementAt(i * gm.BoardSize + j).Revealed || gm.Cards.ElementAt(i * gm.BoardSize + j).Matched ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front" id="card-front-@(x)-@(y)">@gm.Cards.ElementAt(i * gm.BoardSize + j).Text</div>
+                <div class="flip-card-inner" style=@(gm.Cards.ElementAt(i * Size + j).Revealed || gm.Cards.ElementAt(i * Size + j).Matched ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+                    <div class="card-front" id="card-front-@(x)-@(y)">@gm.Cards.ElementAt(i * Size + j).Text</div>
                     <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
                 </div>
             </div>
@@ -33,12 +43,25 @@
     }
 </div>
 
+<br />
+<button style="display:@(gm.GameOver ? "block" : "none")" @onclick="() => Restart(Level, Size)">Restart</button>
+
+<br />
+<h3>Records:</h3>
+
 @code {
 
-    GameModel gm = new GameModel();
+    GameModel gm = new GameModel(1, 4);
 
     bool LimitReached = false;
-    System.Timers.Timer t = new System.Timers.Timer(1000);
+
+    public int TimeCounter => gm.TimeCounter;
+
+    private System.Timers.Timer _t;
+
+    private int _level;
+
+    private int _size;
 
     [Parameter]
     public int Level 
@@ -49,12 +72,31 @@
         }
         set
         {
-            gm.Level = value;
+            Restart(value, Size);
+        } 
+    }
+
+    [Parameter]
+    public int Size 
+    {
+        get
+        {
+            return gm.BoardSize;
+        }
+        set
+        {
+            Restart(Level, value);
         } 
     }
 
     public void CardBackClicked(int row, int col)
     {
+        if (!gm.Started)
+        {
+            gm.Started = true;
+            gm.GameTimer.Elapsed += this.GameTimerElapsed;
+            gm.GameTimer.Start();
+        }
         if (LimitReached)
         {
             return;
@@ -63,13 +105,40 @@
         LimitReached = gm.Match();
         if (LimitReached)
         {
-            t.Elapsed += this.f;
-            t.Start();
+            gm.DelayTimer.Elapsed += this.DelayTimerElapesd;
+            gm.DelayTimer.Start();
         }
         StateHasChanged();
+        if (gm.GameOver)
+        {
+            gm.GameTimer.Elapsed -= this.GameTimerElapsed;
+            gm.GameTimer.Stop();
+            gm.GameTimer.Dispose();
+        }
     }
 
-    void f(object? sender, System.Timers.ElapsedEventArgs e)
+    public void Restart(int level, int size)
+    {
+        gm.DelayTimer.Stop();
+        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
+        gm.GameTimer.Elapsed -= this.GameTimerElapsed;
+        gm.GameTimer.Stop();
+        gm.DelayTimer.Dispose();
+        gm.GameTimer.Dispose();
+        var delay = gm.Cards.Any(c => c.Revealed || c.Matched) ? 1000 : 1;
+
+        gm.TurnBack();
+        StateHasChanged();
+
+        _level = level;
+        _size = size;
+        _t = new System.Timers.Timer(delay);
+        _t.Elapsed += f;
+        _t.Start();
+
+    }
+
+    void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
     {
         foreach(var card in gm.Cards)
         {
@@ -77,7 +146,22 @@
         }
         LimitReached = false;
         StateHasChanged();
-        t.Stop();
-        t.Elapsed -= this.f;
+        gm.DelayTimer.Stop();
+        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
+    }
+
+    void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        gm.TimeCounter += 1;
+        StateHasChanged();
+    }
+
+    void f(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        _t.Elapsed -= f;
+        _t.Stop();
+        _t.Dispose();
+        gm.Restart(_level, _size);
+        StateHasChanged();
     }
 }
