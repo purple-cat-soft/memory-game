@@ -17,6 +17,8 @@ namespace MemoryGame.Models
         /// </summary>
         public int BoardSize { get; set; }
 
+        public CardType CardType { get; set; }
+
         /// <summary>
         /// The list of the cards
         /// </summary>
@@ -43,44 +45,62 @@ namespace MemoryGame.Models
 
         public bool GameOver => Cards.All(c => c.Matched == true);
 
-        private string[] _cards = new string[42];
+        private List<string> _cards = new List<string>();
 
         private Random _random = new Random();
 
-        public GameModel(int level, int size)
+        public GameModel(int level, int size, CardType cardType)
         {
-            for (var i = 0; i < 16; i++)
-            {
-                _cards[i] = i.ToString();
-            }
-            for (var i = 0; i < 26; i++)
-            {
-                _cards[16 + i] = char.ConvertFromUtf32((int)('A') + i);
-            }
+            
             DelayTimer = new Timer(1000);
             GameTimer = new Timer(1000);
             Cards = new List<Card>();
-            Restart(level, size);
+            Restart(level, size, cardType);
         }
 
         public void TurnBack()
         {
             Cards.ForEach(c => c.Revealed = false);
-            Cards.ForEach(c => c.Matched = false);
         }
 
-        public void Restart(int level, int size)
+        public void Restart(int level, int size, CardType cardType)
         {
             BoardSize = size;
             Level = level;
+            CardType = cardType;
+            DelayTimer = new Timer(1000);
+            GameTimer = new Timer(1000); 
             Cards = new List<Card>();
             TimeCounter = 0;
+
+            _cards = new List<string>();
+            if (cardType == CardType.Decimal)
+            {
+                for (var i = 0; i < 10; i++)
+                {
+                    _cards.Add(i.ToString());
+                }
+            }
+            else if (cardType == CardType.Hexadecimal)
+            {
+                for (var i = 0; i < 16; i++)
+                {
+                    _cards.Add(i.ToString());
+                }
+            }
+            else if (cardType == CardType.Alphabet)
+            {
+                for (var i = 0; i < 26; i++)
+                {
+                    _cards.Add(char.ConvertFromUtf32((int)('A') + i));
+                }
+            }
 
             var cardPool = new List<string>();
 
             for (var i = 0; i < BoardSize * BoardSize / 2; i++)
             {
-                var card = _cards[_random.Next(42)];
+                var card = _cards[_random.Next(_cards.Count)];
                 cardPool.Add(card);
                 cardPool.Add(card);
 
@@ -100,17 +120,19 @@ namespace MemoryGame.Models
 
         public bool Match()
         {
-            var revealedCards = Cards.Where(c => c.Revealed);
+            bool isMatched = false;
+            var revealedCards = Cards.Where(c => c.Revealed && !c.Matched);
             var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text) != null);
             if(matchedCards.Any())
             {
                 foreach (var card in matchedCards.ToList())
                 {
                     card.Matched = true;
+                    isMatched = true;
                 }
             }
 
-            return revealedCards.Count() == AllowToReveal;
+            return isMatched || revealedCards.Count() == AllowToReveal;
         }
 
         private void Shuffle(List<string> list)
@@ -144,11 +166,24 @@ namespace MemoryGame.Models
         /// </summary>
         public bool Matched { get; set; }
 
-        public Card(string Text)
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="Text">Card Text</param>
+        public Card(string text, string image = "")
         {
-            this.Text = Text;
+            this.Text = text;
             this.Revealed = false;
             this.Matched = false;
         }
+    }
+
+    public enum CardType
+    {
+        Decimal,
+        Hexadecimal,
+        Alphabet,
+        Images
     }
 }

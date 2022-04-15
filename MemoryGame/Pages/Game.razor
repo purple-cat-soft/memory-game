@@ -14,6 +14,14 @@
     <option value="4">4</option>
 </select>
 
+<h3>Type:</h3>
+<select @bind="@CardType">
+    <option value="Decimal">0-10</option>
+    <option value="Hexadecimal">0-15</option>
+    <option value="Alphabet">A-Z</option>
+    <option value="Images">Images</option>
+</select>
+
 <h3>Size:</h3>
 <select @bind="@Size">
     <option value="4">4</option>
@@ -33,9 +41,10 @@
         {
             int x = i;
             int y = j;
+            var card = gm.Cards.ElementAt(x * Size + y);
             <div class="flip-card">
-                <div class="flip-card-inner" style=@(gm.Cards.ElementAt(i * Size + j).Revealed || gm.Cards.ElementAt(i * Size + j).Matched ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front" id="card-front-@(x)-@(y)">@gm.Cards.ElementAt(i * Size + j).Text</div>
+                <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+                    <div class="card-front" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray")">@card.Text</div>
                     <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClicked(x, y))"></div>
                 </div>
             </div>
@@ -44,14 +53,14 @@
 </div>
 
 <br />
-<button style="display:@(gm.GameOver ? "block" : "none")" @onclick="() => Restart(Level, Size)">Restart</button>
+<button style="display:@(gm.GameOver ? "block" : "none")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
 
 <br />
 <h3>Records:</h3>
 
 @code {
 
-    GameModel gm = new GameModel(1, 4);
+    GameModel gm = new GameModel(1, 4, Models.CardType.Decimal);
 
     bool LimitReached = false;
 
@@ -63,6 +72,8 @@
 
     private int _size;
 
+    private CardType _cardType;
+
     [Parameter]
     public int Level 
     {
@@ -72,7 +83,7 @@
         }
         set
         {
-            Restart(value, Size);
+            Restart(value, Size, CardType);
         } 
     }
 
@@ -85,8 +96,21 @@
         }
         set
         {
-            Restart(Level, value);
+            Restart(Level, value, CardType);
         } 
+    }
+
+    [Parameter]
+    public string CardType 
+    {
+        get
+        {
+            return gm.CardType.ToString();    
+        }
+        set
+        {
+            Restart(Level, Size, value);
+        }
     }
 
     public void CardBackClicked(int row, int col)
@@ -108,16 +132,16 @@
             gm.DelayTimer.Elapsed += this.DelayTimerElapesd;
             gm.DelayTimer.Start();
         }
-        StateHasChanged();
         if (gm.GameOver)
         {
             gm.GameTimer.Elapsed -= this.GameTimerElapsed;
             gm.GameTimer.Stop();
             gm.GameTimer.Dispose();
         }
+        StateHasChanged();
     }
 
-    public void Restart(int level, int size)
+    public void Restart(int level, int size, string cardType)
     {
         gm.DelayTimer.Stop();
         gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
@@ -128,26 +152,23 @@
         var delay = gm.Cards.Any(c => c.Revealed || c.Matched) ? 1000 : 1;
 
         gm.TurnBack();
-        StateHasChanged();
 
         _level = level;
         _size = size;
+        Enum.TryParse(cardType, out _cardType);
         _t = new System.Timers.Timer(delay);
         _t.Elapsed += f;
         _t.Start();
-
+        StateHasChanged();
     }
 
     void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        foreach(var card in gm.Cards)
-        {
-            card.Revealed = false;
-        }
+        gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
         LimitReached = false;
-        StateHasChanged();
         gm.DelayTimer.Stop();
         gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
+        StateHasChanged();
     }
 
     void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -161,7 +182,7 @@
         _t.Elapsed -= f;
         _t.Stop();
         _t.Dispose();
-        gm.Restart(_level, _size);
+        gm.Restart(_level, _size, _cardType);
         StateHasChanged();
     }
 }

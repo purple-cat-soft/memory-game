@@ -25,9 +25,10 @@
     min-width: 64px;
     min-height: 64px;
     max-width: 64px;
-    max-height: 64px; 
+    max-height: 64px;
     text-align: center;
-    vertical-align: central;
+    line-height: 64px;
+    margin: auto;
     transition: transform 1s;
     transform-style: preserve-3d;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -50,8 +51,9 @@
 }
 
 .card-back {
-    background-color: hotpink;
-    color: hotpink;
+    background: url("images/cardback.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     border-color: black;
     border: solid;
     font-size: 0px;
