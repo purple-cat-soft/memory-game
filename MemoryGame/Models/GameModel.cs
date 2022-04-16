@@ -52,6 +52,7 @@ namespace MemoryGame.Models
             DelayTimer = new Timer(1000);
             GameTimer = new Timer(1000);
             Cards = new List<Card>();
+            Started = false;
             TimeCounter = 0;
 
             _cards = new List<string>();
