@@ -58,7 +58,12 @@ public partial class Game
     }
   }
 
-  public void CardBackClicked(int row, int col)
+    protected override async Task OnInitializedAsync()
+    {
+        await gm.LoadAsync(localStore);
+    }
+
+  public async Task CardBackClickedAsync(int row, int col)
   {
     if (!gm.Started)
     {
@@ -82,6 +87,8 @@ public partial class Game
       gm.GameTimer.Elapsed -= this.GameTimerElapsed;
       gm.GameTimer.Stop();
       gm.GameTimer.Dispose();
+      await gm.SaveAsync(localStore);
+      await gm.LoadAsync(localStore);
     }
     StateHasChanged();
   }

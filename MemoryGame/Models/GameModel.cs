@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System.Timers;
+using Blazored.LocalStorage;
 using Timer = System.Timers.Timer;
 
 namespace MemoryGame.Models
@@ -30,12 +31,14 @@ namespace MemoryGame.Models
 
         public bool GameOver => Cards.All(c => c.Matched == true);
 
+        public Dictionary<(int, int, string), int> Records = new Dictionary<(int, int, string), int>();
+
         public GameModel(int level, int size, CardType cardType)
         {
-
             DelayTimer = new Timer(1000);
             GameTimer = new Timer(1000);
             Cards = new List<Card>();
+            InitializeRecords();
             Restart(level, size, cardType);
         }
 
@@ -127,6 +130,59 @@ namespace MemoryGame.Models
                 string value = list[k];
                 list[k] = list[n];
                 list[n] = value;
+            }
+        }
+
+        private void InitializeRecords()
+        {
+            for (var level = 1; level <= 4; level ++)
+            {
+                for (var size = 4; size <= 10; size += 2)
+                {
+                    Records.Add((level, size, "0-9"), 999);
+                    Records.Add((level, size, "0-15"), 999);
+                    Records.Add((level, size, "A-Z"), 999);
+                    Records.Add((level, size, "Images"), 999);
+                }
+            }
+        }
+
+        public async Task SaveAsync(ILocalStorageService localStore)
+        {
+            var oldValue = await localStore.GetItemAsync<int>($"{Level}_{BoardSize}_{CardType}");
+            if (oldValue == 0 || TimeCounter < oldValue)
+            {
+                await localStore.SetItemAsync($"{Level}_{BoardSize}_{CardType}", TimeCounter);
+            }
+        }
+
+        public async Task LoadAsync(ILocalStorageService localStore)
+        {
+            for(var level = 1; level <= 4; level ++)
+            {
+                for (var size = 4; size <= 10; size += 2)
+                {
+                    var oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Decimal");
+                    if (oldValue != 0)
+                    {
+                        Records[(level, size, "0-9")] = oldValue;
+                    }
+                    oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Hexadecimal");
+                    if (oldValue != 0)
+                    {
+                        Records[(level, size, "0-15")] = oldValue;
+                    }
+                    oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Alphabet");
+                    if (oldValue != 0)
+                    {
+                        Records[(level, size, "A-Z")] = oldValue;
+                    }
+                    oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Images");
+                    if (oldValue != 0)
+                    {
+                        Records[(level, size, "Images")] = oldValue;
+                    }
+                }
             }
         }
     }
