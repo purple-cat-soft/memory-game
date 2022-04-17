@@ -33,6 +33,8 @@ namespace MemoryGame.Models
 
         public Dictionary<(int, int, string), int> Records = new Dictionary<(int, int, string), int>();
 
+        public int NumOfImages { get; set; }
+
         public GameModel(int level, int size, CardType cardType)
         {
             DelayTimer = new Timer(1000);
@@ -78,6 +80,13 @@ namespace MemoryGame.Models
                 for (var i = 0; i < 26; i++)
                 {
                     _cards.Add(char.ConvertFromUtf32((int)('A') + i));
+                }
+            }
+            else if (cardType == CardType.Images)
+            {
+                for (var i = 1; i <= NumOfImages; i++)
+                {
+                    _cards.Add(i.ToString());
                 }
             }
 

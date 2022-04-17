@@ -34,7 +34,7 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-.card-front, .card-back {
+.card-front, .card-back, .card-front-img {
     position: absolute;
     min-width: 64px;
     min-height: 64px;
@@ -42,11 +42,21 @@
     max-height: 64px;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    font-size: 32px;
 }
 
 .card-front {
     background-color: gray;
+    transform: rotateY(180deg);
+    font-size: 32px;
+}
+
+.card-front-img {
+    /*background: url("images/flags/china.png");*/
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-color: black;
+    border: solid;
+    font-size: 0px;
     transform: rotateY(180deg);
 }
 

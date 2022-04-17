@@ -5,7 +5,7 @@ namespace MemoryGame.Pages;
 
 public partial class Game
 {
-  GameModel gm = new GameModel(1, 4, Models.CardType.Decimal);
+  private GameModel gm;
 
   bool LimitReached = false;
 
@@ -60,6 +60,12 @@ public partial class Game
 
     protected override async Task OnInitializedAsync()
     {
+        gm = new GameModel(1, 4, Models.CardType.Decimal);
+        gm.NumOfImages = 0;
+        while(await UrlValid($"images/flags/{gm.NumOfImages+1}.png"))
+        {
+            gm.NumOfImages++;
+        }
         await gm.LoadAsync(localStore);
     }
 
@@ -117,7 +123,7 @@ public partial class Game
     StateHasChanged();
   }
 
-  void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
+  private void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
   {
         gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
         LimitReached = false;
@@ -126,13 +132,13 @@ public partial class Game
         StateHasChanged();
     }
 
-  void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+  private void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
   {
     gm.TimeCounter += 1;
     StateHasChanged();
   }
 
-  void f(object? sender, System.Timers.ElapsedEventArgs e)
+  private void f(object? sender, System.Timers.ElapsedEventArgs e)
   {
     _t.Elapsed -= f;
     _t.Stop();
@@ -140,4 +146,10 @@ public partial class Game
     gm.Restart(_level, _size, _cardType);
     StateHasChanged();
   }
+
+    private async Task<bool> UrlValid(string url)
+    {
+        var result = await Http.GetAsync(url);
+        return result.StatusCode == System.Net.HttpStatusCode.OK;
+    }
 }
