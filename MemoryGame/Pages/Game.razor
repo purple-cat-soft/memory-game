@@ -10,18 +10,19 @@
 
 <h3>Level:</h3>
 <select @bind="@Level">
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
 </select>
+
 
 <h3>Type:</h3>
 <select @bind="@CardType">
   <option value="Decimal">0-10</option>
   <option value="Hexadecimal">0-15</option>
   <option value="Alphabet">A-Z</option>
-  <option value="Images">Images</option>
+  <option value="Images" disabled>Images</option>
 </select>
 
 <h3>Size:</h3>
@@ -54,24 +55,22 @@
   }
 </div>
 
-<br />
-<button style="display:@(gm.GameOver ? "block" : "none")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
+<button class="btn btn-primary" style="@(gm.GameOver ? "" : "visibility:hidden")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
 
-<br />
 @if (gm.Records.Count(r => r.Value < 999) > 0)
 {
     <h3>Records:</h3>
     <div class="row">
-        <div class="col-3 border border-dark font-weight-bold">
+        <div class="col-1 border border-dark font-weight-bold">
             <b>Level</b>
         </div>
-        <div class="col-3 border border-dark font-weight-bold">
+        <div class="col-1 border border-dark font-weight-bold">
             <b>Size</b>
         </div>
-        <div class="col-3 border border-dark font-weight-bold">
+        <div class="col-1 border border-dark font-weight-bold">
             <b>Card Type</b>
         </div>
-        <div class="col-3 border border-dark font-weight-bold">
+        <div class="col-2 border border-dark font-weight-bold">
             <b>Record (seconds)</b>
         </div>
     </div>
@@ -81,16 +80,16 @@
         @if(record.Value < 999)
         {
         <div class="row">
-            <div class="col-3 border border-dark font-weight-bold">
+            <div class="col-1 border border-dark font-weight-bold">
                 @record.Key.Item1
             </div>
-            <div class="col-3 border border-dark font-weight-bold">
+            <div class="col-1 border border-dark font-weight-bold">
                 @record.Key.Item2
             </div>
-            <div class="col-3 border border-dark font-weight-bold">
+            <div class="col-1 border border-dark font-weight-bold">
                 @record.Key.Item3
             </div>
-            <div class="col-3 border border-dark font-weight-bold">
+            <div class="col-2 border border-dark font-weight-bold">
                 @record.Value
             </div>
         </div>

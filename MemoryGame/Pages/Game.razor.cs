@@ -73,7 +73,10 @@ public partial class Game
     }
     if (LimitReached)
     {
-      return;
+            gm.DelayTimer.Stop();
+            gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
+            gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
+            LimitReached = false;
     }
     gm.Cards.ElementAt(row * gm.BoardSize + col).Revealed = true;
     LimitReached = gm.Match();
@@ -116,12 +119,12 @@ public partial class Game
 
   void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
   {
-    gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
-    LimitReached = false;
-    gm.DelayTimer.Stop();
-    gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-    StateHasChanged();
-  }
+        gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
+        LimitReached = false;
+        gm.DelayTimer.Stop();
+        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
+        StateHasChanged();
+    }
 
   void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
   {
