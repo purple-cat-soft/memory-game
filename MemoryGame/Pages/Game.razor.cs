@@ -62,7 +62,7 @@ public partial class Game
     {
         gm = new GameModel(1, 4, Models.CardType.Decimal);
         gm.NumOfImages = 0;
-        while(await UrlValid($"images/flags/{gm.NumOfImages+1}.png"))
+        while(await UrlValid($"images/group1/{gm.NumOfImages+1}.png"))
         {
             gm.NumOfImages++;
         }

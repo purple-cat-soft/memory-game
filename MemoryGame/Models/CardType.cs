@@ -5,6 +5,7 @@
         Decimal,
         Hexadecimal,
         Alphabet,
-        Images
+        Images,
+        RelatedImages
     }
 }

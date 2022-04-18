@@ -89,14 +89,21 @@ namespace MemoryGame.Models
                     _cards.Add(i.ToString());
                 }
             }
+            else if (cardType == CardType.RelatedImages)
+            {
+                for (var i = 1; i <= NumOfImages; i++)
+                {
+                    _cards.Add(i.ToString());
+                }
+            }
 
-            var cardPool = new List<string>();
+            var cardPool = new List<(string, int)>();
 
             for (var i = 0; i < BoardSize * BoardSize / 2; i++)
             {
                 var card = _cards[_random.Next(_cards.Count)];
-                cardPool.Add(card);
-                cardPool.Add(card);
+                cardPool.Add((card, 1));
+                cardPool.Add((card, 2));
 
             }
             Shuffle(cardPool);
@@ -107,7 +114,7 @@ namespace MemoryGame.Models
                 {
                     var card = cardPool.First();
                     cardPool.Remove(card);
-                    Cards.Add(new Card(card));
+                    Cards.Add(new Card(card.Item1, card.Item2));
                 }
             }
         }
@@ -116,10 +123,19 @@ namespace MemoryGame.Models
         {
             bool isMatched = false;
             var revealedCards = Cards.Where(c => c.Revealed && !c.Matched);
-            var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text) != null);
+            var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text && (CardType != CardType.RelatedImages || c2.Index != c1.Index)) != null);
             if (matchedCards.Any())
             {
-                foreach (var card in matchedCards.ToList())
+                var matchedCardsList = matchedCards.ToList();
+                if (matchedCards.Count() > 2)
+                {
+                    var extraCard = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text && c1.Index == c2.Index) != null);
+                    if (extraCard != null)
+                    {
+                        matchedCardsList.Remove(extraCard);
+                    }
+                }
+                foreach (var card in matchedCardsList)
                 {
                     card.Matched = true;
                     isMatched = true;
@@ -129,14 +145,14 @@ namespace MemoryGame.Models
             return isMatched || revealedCards.Count() == AllowToReveal;
         }
 
-        private void Shuffle(List<string> list)
+        private void Shuffle(List<(string, int)> list)
         {
             int n = list.Count;
             while (n > 1)
             {
                 n--;
                 int k = _random.Next(n + 1);
-                string value = list[k];
+                var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }
@@ -152,6 +168,7 @@ namespace MemoryGame.Models
                     Records.Add((level, size, "0-15"), 999);
                     Records.Add((level, size, "A-Z"), 999);
                     Records.Add((level, size, "Images"), 999);
+                    Records.Add((level, size, "Related Images"), 999);
                 }
             }
         }
@@ -190,6 +207,11 @@ namespace MemoryGame.Models
                     if (oldValue != 0)
                     {
                         Records[(level, size, "Images")] = oldValue;
+                    }
+                    oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_RelatedImages");
+                    if (oldValue != 0)
+                    {
+                        Records[(level, size, "Related Images")] = oldValue;
                     }
                 }
             }
