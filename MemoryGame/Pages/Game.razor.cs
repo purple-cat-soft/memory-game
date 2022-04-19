@@ -118,7 +118,7 @@ public partial class Game
     _size = size;
     Enum.TryParse(cardType, out _cardType);
     _t = new System.Timers.Timer(delay);
-    _t.Elapsed += f;
+    _t.Elapsed += RestartDelay;
     _t.Start();
     StateHasChanged();
   }
@@ -138,9 +138,9 @@ public partial class Game
     StateHasChanged();
   }
 
-  private void f(object? sender, System.Timers.ElapsedEventArgs e)
+  private void RestartDelay(object? sender, System.Timers.ElapsedEventArgs e)
   {
-    _t.Elapsed -= f;
+    _t.Elapsed -= RestartDelay;
     _t.Stop();
     _t.Dispose();
     gm.Restart(_level, _size, _cardType);

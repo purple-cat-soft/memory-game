@@ -129,16 +129,23 @@ namespace MemoryGame.Models
                 var matchedCardsList = matchedCards.ToList();
                 if (matchedCards.Count() > 2)
                 {
-                    var extraCard = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text && c1.Index == c2.Index) != null);
-                    if (extraCard != null)
+                    
+                    var card1 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text && c1.Index == c2.Index) != null);
+                    var card2 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text) == null);
+                    if (card1 != null && card2 != null)
                     {
-                        matchedCardsList.Remove(extraCard);
+                        card1.Matched = true;
+                        card2.Matched = true;
+                        isMatched = true;
                     }
                 }
-                foreach (var card in matchedCardsList)
+                else
                 {
-                    card.Matched = true;
-                    isMatched = true;
+                    foreach (var card in matchedCardsList)
+                    {
+                        card.Matched = true;
+                        isMatched = true;
+                    }
                 }
             }
 
