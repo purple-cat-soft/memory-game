@@ -131,7 +131,7 @@ namespace MemoryGame.Models
                 {
                     
                     var card1 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text && c1.Index == c2.Index) != null);
-                    var card2 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text) == null);
+                    var card2 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Index == c2.Index) == null);
                     if (card1 != null && card2 != null)
                     {
                         card1.Matched = true;
