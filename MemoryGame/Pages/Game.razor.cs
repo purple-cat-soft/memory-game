@@ -5,151 +5,132 @@ namespace MemoryGame.Pages;
 
 public partial class Game
 {
-  private GameModel gm;
-
-  bool LimitReached = false;
-
-  public int TimeCounter => gm.TimeCounter;
-
-  private System.Timers.Timer _t;
-
+  private GameModel _model;
+  private bool _limitReached;
+  private System.Timers.Timer _timer;
   private int _level;
-
   private int _size;
-
   private CardType _cardType;
+
+  public int TimeCounter => _model.TimeCounter;
 
   [Parameter]
   public int Level
   {
-    get
-    {
-      return gm.Level;
-    }
-    set
-    {
-      Restart(value, Size, CardType);
-    }
+    get => _model.Level;
+    set => Restart(value, Size, CardType);
   }
 
   [Parameter]
   public int Size
   {
-    get
-    {
-      return gm.BoardSize;
-    }
-    set
-    {
-      Restart(Level, value, CardType);
-    }
+    get => _model.BoardSize;
+    set => Restart(Level, value, CardType);
   }
 
   [Parameter]
   public string CardType
   {
-    get
-    {
-      return gm.CardType.ToString();
-    }
-    set
-    {
-      Restart(Level, Size, value);
-    }
+    get => _model.CardType.ToString();
+    set => Restart(Level, Size, value);
   }
 
-    protected override async Task OnInitializedAsync()
+  protected override async Task OnInitializedAsync()
+  {
+    _model = new GameModel(1, 4, Models.CardType.Decimal);
+    _model.NumOfImages = 0;
+    while (await UrlValid($"images/group1/{_model.NumOfImages + 1}.png"))
     {
-        gm = new GameModel(1, 4, Models.CardType.Decimal);
-        gm.NumOfImages = 0;
-        while(await UrlValid($"images/group1/{gm.NumOfImages+1}.png"))
-        {
-            gm.NumOfImages++;
-        }
-        await gm.LoadAsync(localStore);
+      _model.NumOfImages++;
     }
+    await _model.LoadAsync(localStore);
+  }
 
   public async Task CardBackClickedAsync(int row, int col)
   {
-    if (!gm.Started)
+    if (!_model.Started)
     {
-      gm.Started = true;
-      gm.GameTimer.Elapsed += this.GameTimerElapsed;
-      gm.GameTimer.Start();
+      _model.Started = true;
+      _model.GameTimer.Elapsed += this.GameTimerElapsed;
+      _model.GameTimer.Start();
     }
-    if (LimitReached)
+
+    if (_limitReached)
     {
-            gm.DelayTimer.Stop();
-            gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-            gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
-            LimitReached = false;
+      _model.DelayTimer.Stop();
+      _model.DelayTimer.Elapsed -= this.DelayTimerElapsed;
+      _model.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
+      _limitReached = false;
     }
-    gm.Cards.ElementAt(row * gm.BoardSize + col).Revealed = true;
-    LimitReached = gm.Match();
-    if (LimitReached)
+
+    _model.Cards.ElementAt(row * _model.BoardSize + col).Revealed = true;
+    _limitReached = _model.Match();
+    
+    if (_limitReached)
     {
-      gm.DelayTimer.Elapsed += this.DelayTimerElapesd;
-      gm.DelayTimer.Start();
+      _model.DelayTimer.Elapsed += this.DelayTimerElapsed;
+      _model.DelayTimer.Start();
     }
-    if (gm.GameOver)
+
+    if (_model.GameOver)
     {
-      gm.GameTimer.Elapsed -= this.GameTimerElapsed;
-      gm.GameTimer.Stop();
-      gm.GameTimer.Dispose();
-      await gm.SaveAsync(localStore);
-      await gm.LoadAsync(localStore);
+      _model.GameTimer.Elapsed -= this.GameTimerElapsed;
+      _model.GameTimer.Stop();
+      _model.GameTimer.Dispose();
+      await _model.SaveAsync(localStore);
+      await _model.LoadAsync(localStore);
     }
     StateHasChanged();
   }
 
   public void Restart(int level, int size, string cardType)
   {
-    gm.DelayTimer.Stop();
-    gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-    gm.GameTimer.Elapsed -= this.GameTimerElapsed;
-    gm.GameTimer.Stop();
-    gm.DelayTimer.Dispose();
-    gm.GameTimer.Dispose();
-    var delay = gm.Cards.Any(c => c.Revealed || c.Matched) ? 1000 : 1;
+    _model.DelayTimer.Stop();
+    _model.DelayTimer.Elapsed -= this.DelayTimerElapsed;
+    _model.GameTimer.Elapsed -= this.GameTimerElapsed;
+    _model.GameTimer.Stop();
+    _model.DelayTimer.Dispose();
+    _model.GameTimer.Dispose();
+    var delay = _model.Cards.Any(c => c.Revealed || c.Matched) ? 1000 : 1;
 
-    gm.TurnBack();
+    _model.TurnBack();
 
     _level = level;
     _size = size;
     Enum.TryParse(cardType, out _cardType);
-    _t = new System.Timers.Timer(delay);
-    _t.Elapsed += RestartDelay;
-    _t.Start();
+    _timer = new System.Timers.Timer(delay);
+    _timer.Elapsed += RestartDelay;
+    _timer.Start();
     StateHasChanged();
   }
 
-  private void DelayTimerElapesd(object? sender, System.Timers.ElapsedEventArgs e)
+  private void DelayTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
   {
-        gm.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
-        LimitReached = false;
-        gm.DelayTimer.Stop();
-        gm.DelayTimer.Elapsed -= this.DelayTimerElapesd;
-        StateHasChanged();
-    }
-
-  private void GameTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
-  {
-    gm.TimeCounter += 1;
+    _model.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
+    _limitReached = false;
+    _model.DelayTimer.Stop();
+    _model.DelayTimer.Elapsed -= this.DelayTimerElapsed;
     StateHasChanged();
   }
 
-  private void RestartDelay(object? sender, System.Timers.ElapsedEventArgs e)
+  private void GameTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
   {
-    _t.Elapsed -= RestartDelay;
-    _t.Stop();
-    _t.Dispose();
-    gm.Restart(_level, _size, _cardType);
+    _model.TimeCounter += 1;
     StateHasChanged();
   }
 
-    private async Task<bool> UrlValid(string url)
-    {
-        var result = await Http.GetAsync(url);
-        return result.StatusCode == System.Net.HttpStatusCode.OK;
-    }
+  private void RestartDelay(object sender, System.Timers.ElapsedEventArgs e)
+  {
+    _timer.Elapsed -= RestartDelay;
+    _timer.Stop();
+    _timer.Dispose();
+    _model.Restart(_level, _size, _cardType);
+    StateHasChanged();
+  }
+
+  private async Task<bool> UrlValid(string url)
+  {
+    var result = await Http.GetAsync(url);
+    return result.StatusCode == System.Net.HttpStatusCode.OK;
+  }
 }
