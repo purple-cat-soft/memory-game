@@ -1,11 +1,11 @@
 ﻿namespace MemoryGame.Models
 {
-    public enum CardType
-    {
-        Decimal,
-        Hexadecimal,
-        Alphabet,
-        Images,
-        RelatedImages
-    }
+  public enum CardType
+  {
+    Decimal,
+    Hexadecimal,
+    Alphabet,
+    Images,
+    RelatedImages
+  }
 }
