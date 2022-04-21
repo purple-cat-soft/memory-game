@@ -12,116 +12,116 @@
 
 <h3>Level:</h3>
 <select @bind="@Level">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
 </select>
 
 
 <h3>Type:</h3>
 <select @bind="@CardType">
-    <option value="Decimal">0-9</option>
-    <option value="Hexadecimal">0-15</option>
-    <option value="Alphabet">A-Z</option>
-    <option value="Images">Images</option>
-    <option value="RelatedImages">Related Images</option>
+  <option value="Decimal">0-9</option>
+  <option value="Hexadecimal">0-15</option>
+  <option value="Alphabet">A-Z</option>
+  <option value="Images">Images</option>
+  <option value="RelatedImages">Related Images</option>
 </select>
 
 <h3>Size:</h3>
 <select @bind="@Size">
-    <option value="4">4</option>
-    <option value="6">6</option>
-    <option value="8">8</option>
-    <option value="10">10</option>
+  <option value="4">4</option>
+  <option value="6">6</option>
+  <option value="8">8</option>
+  <option value="10">10</option>
 </select>
 
 <h3>
-    Time: <span>@TimeCounter</span>
+  Time: <span>@TimeCounter</span>
 </h3>
 
 <div class="board" style="width:@((64 * Size).ToString() + "px");height:@((64 * Size).ToString() + "px")">
-    @for (var i = 0; i < Size; i++)
+  @for (var i = 0; i < Size; i++)
+  {
+    @for (var j = 0; j < Size; j++)
     {
-        @for (var j = 0; j < Size; j++)
-        {
-            int x = i;
-            int y = j;
-            var card = _model.Cards.ElementAt(x * Size + y);
-            if (_model.CardType == Models.CardType.Images)
-            {
-                var img = $"url(\"images/group1/{card.Text}.png\")";
-                <div class="flip-card">
-                <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front-img" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray");background-image:@img">@card.Text</div>
-                    <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
-                </div>
-                </div>
-            }
-            else if (_model.CardType == Models.CardType.RelatedImages)
-            {
-                var group = card.Index;
-                var img = $"url(\"images/group{group}/{card.Text}.png\")";
+      int x = i;
+      int y = j;
+      var card = _model.Cards.ElementAt(x * Size + y);
+      if (_model.CardType == Models.CardType.Images)
+      {
+        var img = $"url(\"images/group1/{card.Text}.png\")";
+        <div class="flip-card">
+          <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+            <div class="card-front-img" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray");background-image:@img">@card.Text</div>
+            <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
+          </div>
+        </div>
+      }
+      else if (_model.CardType == Models.CardType.RelatedImages)
+      {
+        var group = card.Index;
+        var img = $"url(\"images/group{group}/{card.Text}.png\")";
 
-                <div class="flip-card">
-                <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front-img" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray");background-image:@img">@card.Text</div>
-                    <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
-                </div>
-                </div>  
-            }
-            else
-            {
-                <div class="flip-card">
-                <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
-                    <div class="card-front" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray")">@card.Text</div>
-                    <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
-                </div>
-                </div>           
-            }
-        }
+        <div class="flip-card">
+          <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+            <div class="card-front-img" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray");background-image:@img">@card.Text</div>
+            <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
+          </div>
+        </div>
+      }
+      else
+      {
+        <div class="flip-card">
+          <div class="flip-card-inner" style=@(card.Revealed ? "transform: rotateY(180deg)" : "transform: rotateY(0deg)")>
+            <div class="card-front" id="card-front-@(x)-@(y)" style="background-color:@(card.Matched ? "gold" : "gray")">@card.Text</div>
+            <div class="card-back" id="card-back-@(x)-@(y)" @onclick="@(() => CardBackClickedAsync(x, y))"></div>
+          </div>
+        </div>
+      }
     }
+  }
 </div>
 
 <button class="btn btn-primary" style="@(_model.GameOver ? "" : "visibility:hidden")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
 
 @if (_model.Records.Count(r => r.Value < 999) > 0)
 {
-    <h3>Records:</h3>
-    <div class="row">
+  <h3>Records:</h3>
+  <div class="row">
+    <div class="col-1 border border-dark font-weight-bold">
+      <b>Level</b>
+    </div>
+    <div class="col-1 border border-dark font-weight-bold">
+      <b>Size</b>
+    </div>
+    <div class="col-1 border border-dark font-weight-bold">
+      <b>Card Type</b>
+    </div>
+    <div class="col-2 border border-dark font-weight-bold">
+      <b>Record (seconds)</b>
+    </div>
+  </div>
+
+  @foreach (var record in _model.Records)
+  {
+    @if (record.Value < 999)
+    {
+      <div class="row">
         <div class="col-1 border border-dark font-weight-bold">
-            <b>Level</b>
+          @record.Key.Item1
         </div>
         <div class="col-1 border border-dark font-weight-bold">
-            <b>Size</b>
+          @record.Key.Item2
         </div>
         <div class="col-1 border border-dark font-weight-bold">
-            <b>Card Type</b>
+          @record.Key.Item3
         </div>
         <div class="col-2 border border-dark font-weight-bold">
-            <b>Record (seconds)</b>
+          @record.Value
         </div>
-    </div>
-
-    @foreach (var record in _model.Records)
-    {
-        @if(record.Value < 999)
-        {
-        <div class="row">
-            <div class="col-1 border border-dark font-weight-bold">
-                @record.Key.Item1
-            </div>
-            <div class="col-1 border border-dark font-weight-bold">
-                @record.Key.Item2
-            </div>
-            <div class="col-1 border border-dark font-weight-bold">
-                @record.Key.Item3
-            </div>
-            <div class="col-2 border border-dark font-weight-bold">
-                @record.Value
-            </div>
-        </div>
-        }
+      </div>
     }
+  }
 }
 

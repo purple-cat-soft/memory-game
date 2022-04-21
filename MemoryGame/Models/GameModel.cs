@@ -1,14 +1,11 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Timers;
-using Blazored.LocalStorage;
+﻿using Blazored.LocalStorage;
 using Timer = System.Timers.Timer;
 
 namespace MemoryGame.Models
 {
   public class GameModel
   {
-    private Random _random = new Random(Environment.TickCount);
+    private readonly Random _random = new Random(Environment.TickCount);
     private List<string> _cards = new List<string>();
 
     public int Level { get; private set; }
@@ -29,7 +26,7 @@ namespace MemoryGame.Models
 
     public bool Started { get; set; }
 
-    public bool GameOver => Cards.All(c => c.Matched == true);
+    public bool GameOver => Cards.All(c => c.Matched);
 
     public Dictionary<(int, int, string), int> Records = new Dictionary<(int, int, string), int>();
 
@@ -79,7 +76,7 @@ namespace MemoryGame.Models
       {
         for (var i = 0; i < 26; i++)
         {
-          _cards.Add(char.ConvertFromUtf32((int)('A') + i));
+          _cards.Add(char.ConvertFromUtf32('A' + i));
         }
       }
       else if (cardType == CardType.Images)
@@ -122,8 +119,11 @@ namespace MemoryGame.Models
     public bool Match()
     {
       bool isMatched = false;
-      var revealedCards = Cards.Where(c => c.Revealed && !c.Matched);
-      var matchedCards = Cards.Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text && (CardType != CardType.RelatedImages || c2.Index != c1.Index)) != null);
+      var revealedCards = Cards.Where(c => c.Revealed && !c.Matched).ToArray();
+      var matchedCards = Cards
+        .Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text && (CardType != CardType.RelatedImages || c2.Index != c1.Index)) != null)
+        .ToArray();
+
       if (matchedCards.Any())
       {
         var matchedCardsList = matchedCards.ToList();
