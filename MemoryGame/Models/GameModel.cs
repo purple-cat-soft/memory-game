@@ -6,7 +6,6 @@ namespace MemoryGame.Models
   public class GameModel
   {
     private readonly Random _random = new Random(Environment.TickCount);
-    private List<string> _cards = new List<string>();
 
     public int Level { get; private set; }
 
@@ -14,9 +13,9 @@ namespace MemoryGame.Models
 
     public CardType CardType { get; private set; }
 
-    public List<Card> Cards { get; private set; }
+    public IList<Card> Cards { get; private set; }
 
-    public int AllowToReveal => 6 - Level > 0 ? 6 - Level : 0;
+    public int AllowToReveal => 2;
 
     public int TimeCounter { get; set; }
 
@@ -28,8 +27,6 @@ namespace MemoryGame.Models
 
     public bool GameOver => Cards.All(c => c.Matched);
 
-    public Dictionary<(int, int, string), int> Records = new Dictionary<(int, int, string), int>();
-
     public int NumOfImages { get; set; }
 
     public GameModel(int level, int size, CardType cardType)
@@ -37,13 +34,15 @@ namespace MemoryGame.Models
       DelayTimer = new Timer(1000);
       GameTimer = new Timer(1000);
       Cards = new List<Card>();
-      InitializeRecords();
       Restart(level, size, cardType);
     }
 
     public void TurnBack()
     {
-      Cards.ForEach(c => c.Revealed = false);
+      foreach (Card card in Cards)
+      {
+        card.Revealed = false;
+      }
     }
 
     public void Restart(int level, int size, CardType cardType)
@@ -57,125 +56,45 @@ namespace MemoryGame.Models
       Started = false;
       TimeCounter = 0;
 
-      _cards = new List<string>();
-      if (cardType == CardType.Decimal)
-      {
-        for (var i = 0; i < 10; i++)
-        {
-          _cards.Add(i.ToString());
-        }
-      }
-      else if (cardType == CardType.Hexadecimal)
-      {
-        for (var i = 0; i < 16; i++)
-        {
-          _cards.Add(i.ToString());
-        }
-      }
-      else if (cardType == CardType.Alphabet)
-      {
-        for (var i = 0; i < 26; i++)
-        {
-          _cards.Add(char.ConvertFromUtf32('A' + i));
-        }
-      }
-      else if (cardType == CardType.Images)
-      {
-        for (var i = 1; i <= NumOfImages; i++)
-        {
-          _cards.Add(i.ToString());
-        }
-      }
-      else if (cardType == CardType.RelatedImages)
-      {
-        for (var i = 1; i <= NumOfImages; i++)
-        {
-          _cards.Add(i.ToString());
-        }
-      }
-
-      var cardPool = new List<(string, int)>();
-
-      for (var i = 0; i < BoardSize * BoardSize / 2; i++)
-      {
-        var card = _cards[_random.Next(_cards.Count)];
-        cardPool.Add((card, 1));
-        cardPool.Add((card, 2));
-
-      }
-      Shuffle(cardPool);
-
-      for (var i = 0; i < BoardSize; i++)
-      {
-        for (var j = 0; j < BoardSize; j++)
-        {
-          var card = cardPool.First();
-          cardPool.Remove(card);
-          Cards.Add(new Card(card.Item1, card.Item2));
-        }
-      }
+      Cards = FillCards(size, cardType).ToArray();
     }
 
-    public bool Match()
+    private IList<Card> FillCards(int size, CardType cardType)
     {
-      bool isMatched = false;
-      var revealedCards = Cards.Where(c => c.Revealed && !c.Matched).ToArray();
-      var matchedCards = Cards
-        .Where(c1 => !c1.Matched && c1.Revealed && revealedCards.FirstOrDefault(c2 => !c2.Matched && c2.Revealed && c2 != c1 && c2.Text == c1.Text && (CardType != CardType.RelatedImages || c2.Index != c1.Index)) != null)
-        .ToArray();
+      var cards=new List<Card>();
 
-      if (matchedCards.Any())
+      if (cardType == CardType.Number)
       {
-        var matchedCardsList = matchedCards.ToList();
-        if (matchedCards.Count() > 2)
+        for (var i = 0; i < size * size / 2; i++)
         {
-
-          var card1 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Text == c2.Text && c1.Index == c2.Index) != null);
-          var card2 = matchedCardsList.FirstOrDefault(c1 => matchedCardsList.FirstOrDefault(c2 => c1 != c2 && c1.Index == c2.Index) == null);
-          if (card1 != null && card2 != null)
-          {
-            card1.Matched = true;
-            card2.Matched = true;
-            isMatched = true;
-          }
-        }
-        else
-        {
-          foreach (var card in matchedCardsList)
-          {
-            card.Matched = true;
-            isMatched = true;
-          }
+          cards.Add(new Card(_random.NextInt64(), i.ToString(), i));
+          cards.Add(new Card(_random.NextInt64(), i.ToString(), i));
         }
       }
 
-      return isMatched || revealedCards.Count() == AllowToReveal;
+      return cards.OrderBy(x => x.UniqueId).ToArray();
     }
 
-    private void Shuffle(List<(string, int)> list)
+    public async Task Match()
     {
-      int n = list.Count;
-      while (n > 1)
-      {
-        n--;
-        int k = _random.Next(n + 1);
-        var value = list[k];
-        list[k] = list[n];
-        list[n] = value;
-      }
-    }
+      var groups=Cards.Where(x => x.Revealed && !x.Matched).GroupBy(x => x.Value).Where(x => x.Count() == 2);
 
-    private void InitializeRecords()
-    {
-      for (var level = 1; level <= 4; level++)
+      foreach (var group in groups)
       {
-        for (var size = 4; size <= 10; size += 2)
+        foreach (var card in group)
         {
-          Records.Add((level, size, "0-9"), 999);
-          Records.Add((level, size, "0-15"), 999);
-          Records.Add((level, size, "A-Z"), 999);
-          Records.Add((level, size, "Images"), 999);
-          Records.Add((level, size, "Related Images"), 999);
+          card.Matched = true;
+        }
+      }
+
+      await Task.Delay(2000);
+
+      var upturnedCards = Cards.Where(x => !x.Matched && x.Revealed).ToArray();
+      if (upturnedCards.Count() == 2)
+      {
+        foreach (Card card in upturnedCards)
+        {
+          card.Revealed = false;
         }
       }
     }
@@ -191,37 +110,6 @@ namespace MemoryGame.Models
 
     public async Task LoadAsync(ILocalStorageService localStore)
     {
-      for (var level = 1; level <= 4; level++)
-      {
-        for (var size = 4; size <= 10; size += 2)
-        {
-          var oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Decimal");
-          if (oldValue != 0)
-          {
-            Records[(level, size, "0-9")] = oldValue;
-          }
-          oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Hexadecimal");
-          if (oldValue != 0)
-          {
-            Records[(level, size, "0-15")] = oldValue;
-          }
-          oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Alphabet");
-          if (oldValue != 0)
-          {
-            Records[(level, size, "A-Z")] = oldValue;
-          }
-          oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_Images");
-          if (oldValue != 0)
-          {
-            Records[(level, size, "Images")] = oldValue;
-          }
-          oldValue = await localStore.GetItemAsync<int>($"{level}_{size}_RelatedImages");
-          if (oldValue != 0)
-          {
-            Records[(level, size, "Related Images")] = oldValue;
-          }
-        }
-      }
     }
   }
 }

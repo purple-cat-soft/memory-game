@@ -1,0 +1,10 @@
+﻿@page "/levels"
+
+<div class="container">
+  <div class="matrix-levels">
+    @foreach (var level in Levels)
+    {
+      <div class="matrix-box">@level.Value</div>
+    }
+  </div>
+</div>

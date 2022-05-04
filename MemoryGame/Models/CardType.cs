@@ -1,9 +1,11 @@
-﻿namespace MemoryGame.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+
+namespace MemoryGame.Models
 {
   public enum CardType
   {
-    Decimal,
-    Hexadecimal,
+    Number,
     Alphabet,
     Images,
     RelatedImages

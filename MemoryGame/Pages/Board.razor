@@ -1,0 +1,45 @@
+﻿@using MemoryGame.Models
+@inject ILocalStorageService localStore
+
+<h3>
+  Time: <span>@TimeCounter</span>
+</h3>
+
+<div class="container">
+  <div class="matrix">
+    @foreach (var card in _model.Cards)
+    {
+      <div class="matrix-box @GetCssClass(card)" @onclick="()=>OnClick(card)">@GetContent(card)</div>
+    }
+  </div>
+</div>
+
+<button class="btn btn-primary" style="@(_model.GameOver ? "" : "visibility:hidden")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
+
+@code {
+  private async Task OnClick(Card card)
+  {
+    card.Revealed = true;
+    await _model.Match();
+  }
+
+  private string GetCssClass(Card card)
+  {
+    if (card.Matched)
+    {
+      return "match";
+    }
+
+    //if (card.Revealed)
+    //{
+    //  return "upturned";
+    //}
+
+    return string.Empty;
+  }
+
+  private string GetContent(Card card)
+  {
+    return card.Revealed ? card.Text : string.Empty;
+  }
+}

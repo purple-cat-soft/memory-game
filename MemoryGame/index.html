@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+  html {
+    background-image: linear-gradient(to right, #8360c3, #2ebf91);
+    height: 100vh;
+    width: 100vw;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  @media (min-width:320px) {
+    .matrix {
+      width: 320px;
+      height: 320px;
+    }
+  }
+
+  @media (min-width:481px) {
+    .matrix {
+      width: 480px;
+      height: 480px;
+    }
+  }
+
+  @media (min-width:641px) {
+    .matrix {
+      width: 640px;
+      height: 640px;
+    }
+  }
+
+  .container {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .matrix {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+  }
+
+  .matrix-box {
+    background-color: white;
+    border: 1px solid hsla(0, 0%, 0%, 0.1);
+    box-shadow: 0 0.15em 0.175em hsla(0, 0%, 0%, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    color: #0b9dc1;
+    font-family: "Open Sans", sans-serif;
+    transition: 500ms;
+    transition-timing-function: ease;
+    font-size: 5em;
+  }
+
+    .matrix-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.25);
+      transition: 500ms;
+      transition-timing-function: ease;
+    }
+
+  .appbar {
+    background-image: linear-gradient(to right, darkcyan, darkcyan);
+    display: grid;
+    background-color: red;
+    padding-left: 1em;
+    grid-template-columns: 1fr 1fr;
+    color: white;
+    font-size: 2em;
+  }
+
+
+  .go-back {
+    justify-items: left;
+  }
+
+  .go-back:hover {
+    font-weight: bolder;
+    cursor: pointer;
+  }
+
+  .title {
+    justify-items: center;
+  }
+</style>
+
+<body>
+  <div class="appbar">
+    <div class="go-back">home</div>
+    <div class="title">Title</div>
+  </div>
+  <div class="container">
+    <div class="matrix">
+      <div class="matrix-box">1</div>
+      <div class="matrix-box">2</div>
+      <div class="matrix-box">3</div>
+      <div class="matrix-box">4</div>
+      <div class="matrix-box">5</div>
+      <div class="matrix-box">6</div>
+      <div class="matrix-box">7</div>
+      <div class="matrix-box">8</div>
+      <div class="matrix-box">9</div>
+    </div>
+  </div>
+
+</body>
+
+</html>

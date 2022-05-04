@@ -4,18 +4,21 @@
   {
     public string Text { get; }
 
-    public int Index { get; set; }
+    public int Value { get; set; }
 
     public bool Revealed { get; set; }
 
     public bool Matched { get; set; }
 
-    public Card(string text, int index, string image = "")
+    public long UniqueId { get; set; }
+
+    public Card(long uniqueId, string text, int value, string image = "")
     {
-      this.Text = text;
-      this.Index = index;
-      this.Revealed = false;
-      this.Matched = false;
+      UniqueId = uniqueId;
+      Text = text;
+      Value = value;
+      Revealed = false;
+      Matched = false;
     }
   }
 }

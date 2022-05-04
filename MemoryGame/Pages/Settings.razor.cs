@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MemoryGame.Pages;
 
-public partial class Game
+public partial class Settings
 {
   private GameModel _model;
   private bool _limitReached;
@@ -38,45 +38,8 @@ public partial class Game
   protected override async Task OnInitializedAsync()
   {
     _model = new GameModel(1, 4, Models.CardType.Number);
-
+  
     await _model.LoadAsync(localStore);
-  }
-
-  public async Task CardBackClickedAsync(int row, int col)
-  {
-    if (!_model.Started)
-    {
-      _model.Started = true;
-      _model.GameTimer.Elapsed += this.GameTimerElapsed;
-      _model.GameTimer.Start();
-    }
-
-    if (_limitReached)
-    {
-      _model.DelayTimer.Stop();
-      _model.DelayTimer.Elapsed -= this.DelayTimerElapsed;
-      _model.Cards.Where(c => !c.Matched).ToList().ForEach(c => c.Revealed = false);
-      _limitReached = false;
-    }
-
-    _model.Cards.ElementAt(row * _model.BoardSize + col).Revealed = true;
-    await _model.Match();
-
-    if (_limitReached)
-    {
-      _model.DelayTimer.Elapsed += this.DelayTimerElapsed;
-      _model.DelayTimer.Start();
-    }
-
-    if (_model.GameOver)
-    {
-      _model.GameTimer.Elapsed -= this.GameTimerElapsed;
-      _model.GameTimer.Stop();
-      _model.GameTimer.Dispose();
-      await _model.SaveAsync(localStore);
-      await _model.LoadAsync(localStore);
-    }
-    StateHasChanged();
   }
 
   public void Restart(int level, int size, string cardType)
@@ -123,4 +86,6 @@ public partial class Game
     _model.Restart(_level, _size, _cardType);
     StateHasChanged();
   }
+
+  
 }
