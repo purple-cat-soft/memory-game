@@ -1,4 +1,5 @@
 ﻿@using MemoryGame.Models
+@using System.Net.Http.Headers
 @inject ILocalStorageService localStore
 
 <div class="container">
@@ -11,10 +12,18 @@
 </div>
 
 @code {
+  CancellationTokenSource cancellationTokenSource;
+
   private async Task OnClick(Card card)
   {
+    cancellationTokenSource?.Cancel();
+
+    _model.TryClear();
+
+    cancellationTokenSource = new CancellationTokenSource();
+
     card.Revealed = true;
-    await _model.Match();
+    await _model.Match(cancellationTokenSource.Token);
   }
 
   private string GetCssClass(Card card)
@@ -43,6 +52,6 @@
     var columns = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
     int min = Math.Min(rows, columns);
 
-    return $"min(calc(100vh / {Rows} - 55px / {Rows} - 10px) , calc(100vw / {Columns} - 40px / {Columns} -10 px))";
+    return $"min(calc(100vh / {Rows} - 55px / {Rows} - 10px) , calc(100vw / {Columns} - 20px / {Columns} - 10px))";
   }
 }

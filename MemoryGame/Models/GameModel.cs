@@ -66,7 +66,7 @@ namespace MemoryGame.Models
       return cards.OrderBy(x => x.UniqueId).ToArray();
     }
 
-    public async Task Match()
+    public async Task Match(CancellationToken cancellationToken)
     {
       var groups = Cards.Where(x => x.Revealed && !x.Matched).GroupBy(x => x.Value).Where(x => x.Count() == 2);
 
@@ -78,10 +78,18 @@ namespace MemoryGame.Models
         }
       }
 
-      await Task.Delay(2000);
+      await Task.Delay(2000, cancellationToken);
 
+      if (!cancellationToken.IsCancellationRequested)
+      {
+        TryClear();
+      }
+    }
+
+    public void TryClear()
+    {
       var upturnedCards = Cards.Where(x => !x.Matched && x.Revealed).ToArray();
-      if (upturnedCards.Count() == 2)
+      if (upturnedCards.Count() > 1)
       {
         foreach (Card card in upturnedCards)
         {

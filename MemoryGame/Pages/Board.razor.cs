@@ -13,7 +13,7 @@ public partial class Board
 
   [Parameter]
   public int Level { get; set; }
-  
+
   private int Rows { get; set; }
   private int Columns { get; set; }
 
@@ -22,9 +22,9 @@ public partial class Board
 
   protected override void OnInitialized()
   {
-    Level selectedLevel = LevelProvider.GetLevel(Level);
+    Level selectedLevel = LevelProvider.GetLevel(Level == 0 ? 1 : Level);
     Rows = selectedLevel.Rows;
-    Columns=selectedLevel.Columns;
+    Columns = selectedLevel.Columns;
 
     _model = new GameModel(selectedLevel, Models.CardType.Number);
   }
