@@ -43,6 +43,6 @@
     var columns = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
     int min = Math.Min(rows, columns);
 
-    return $"min({min}vw,{min}vh)";
+    return $"min(calc(100vh / {Rows} - 55px / {Rows} - 10px) , calc(100vw / {Columns} - 40px / {Columns} -10 px))";
   }
 }
