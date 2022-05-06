@@ -1,4 +1,5 @@
 using MemoryGame.Models;
+using MemoryGame.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace MemoryGame.Pages;
@@ -7,37 +8,24 @@ public partial class Board
 {
   private GameModel _model;
 
-  public int TimeCounter => _model.TimeCounter;
+  [Inject]
+  private ILevelProvider LevelProvider { get; set; }
 
   [Parameter]
-  public int Level
-  {
-    get => _model.Level;
-    set => Restart(value, Size, CardType);
-  }
+  public int Level { get; set; }
+  
+  private int Rows { get; set; }
+  private int Columns { get; set; }
 
   [Parameter]
-  public int Size
-  {
-    get => _model.BoardSize;
-    set => Restart(Level, value, CardType);
-  }
+  public string CardType { get; set; }
 
-  [Parameter]
-  public string CardType
+  protected override void OnInitialized()
   {
-    get => _model.CardType.ToString();
-    set => Restart(Level, Size, value);
-  }
+    Level selectedLevel = LevelProvider.GetLevel(Level);
+    Rows = selectedLevel.Rows;
+    Columns=selectedLevel.Columns;
 
-  protected override async Task OnInitializedAsync()
-  {
-    _model = new GameModel(1, 4, Models.CardType.Number);
-  }
-
-  public void Restart(int level, int size, string cardType)
-  {
-    _model.TurnBack();
-    StateHasChanged();
+    _model = new GameModel(selectedLevel, Models.CardType.Number);
   }
 }

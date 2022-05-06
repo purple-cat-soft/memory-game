@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MemoryGame.Shared
 {
   public interface ILevelProvider
   {
-    IEnumerable<Level> GetLevels(int maxRows);
+    IList<Level> Levels { get; }
+    Level GetLevel(int levelValue);
   }
 }

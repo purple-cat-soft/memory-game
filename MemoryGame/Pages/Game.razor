@@ -1,5 +1,5 @@
 ﻿@page "/"
-@page "/index"
+@page "/index/{Level:int}"
 @inject ILocalStorageService localStore
 
-<Board></Board>
+<Board Level="Level"></Board>

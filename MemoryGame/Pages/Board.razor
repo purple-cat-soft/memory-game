@@ -1,20 +1,14 @@
 ﻿@using MemoryGame.Models
 @inject ILocalStorageService localStore
 
-<h3>
-  Time: <span>@TimeCounter</span>
-</h3>
-
 <div class="container">
-  <div class="matrix">
+  <div class="matrix" style="grid-template-columns: repeat(@Columns,@GetCellSize());">
     @foreach (var card in _model.Cards)
     {
-      <div class="matrix-box @GetCssClass(card)" @onclick="()=>OnClick(card)">@GetContent(card)</div>
+      <div class="matrix-cell @GetCssClass(card)" @onclick="()=>OnClick(card)">@GetContent(card)</div>
     }
   </div>
 </div>
-
-<button class="btn btn-primary" style="@(_model.GameOver ? "" : "visibility:hidden")" @onclick="() => Restart(Level, Size, CardType)">Restart</button>
 
 @code {
   private async Task OnClick(Card card)
@@ -41,5 +35,14 @@
   private string GetContent(Card card)
   {
     return card.Revealed ? card.Text : string.Empty;
+  }
+
+  private string GetCellSize()
+  {
+    var rows = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
+    var columns = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
+    int min = Math.Min(rows, columns);
+
+    return $"min({min}vw,{min}vh)";
   }
 }

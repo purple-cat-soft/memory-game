@@ -9,11 +9,10 @@ namespace MemoryGame.Shared.UnitTests
     public void TestGetLevels()
     {
       var levelProvider = new LevelProvider();
-      var levels = levelProvider.GetLevels(10);
 
-      foreach (var level in levels)
+      foreach (var level in levelProvider.Levels)
       {
-        Console.Out.WriteLine($"{level.Rows}x{level.Columns}\t {level.Value}");
+        Console.Out.WriteLine($"{level.Rows}x{level.Columns}\t{level.Rows * level.Columns}");
       }
     }
   }

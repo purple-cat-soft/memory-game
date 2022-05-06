@@ -2,9 +2,8 @@
 {
   public class Level
   {
-    public Level(int value, int columns, int rows)
+    public Level(int rows, int columns)
     {
-      Value = value;
       Columns = columns;
       Rows = rows;
     }
