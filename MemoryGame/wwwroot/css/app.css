@@ -16,15 +16,15 @@ body {
 
 .matrix {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 5px;
   margin: auto;
 }
 
 .matrix-levels {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 5px;
   margin: auto;
-  grid-template-columns: repeat(4,min(calc(100vh / 4 - 55px / 4 - 10px), calc(100vw / 4 - 40px / 4 - 10px)));
+  grid-template-columns: repeat(4,min(calc(100vh / 4 - 45px / 4 - 5px), calc(100vw / 4 - 10px / 4 - 5px)));
 }
 
 .matrix-cell {
@@ -38,8 +38,7 @@ body {
   color: #0b9dc1;
   font-family: "Open Sans", sans-serif;
   transition: 500ms;
-  transition-timing-function: ease;
-  font-size: 2.5em;
+  font-size: 15px;
   grid-row: span 1;
   aspect-ratio: 1/1;
 }
@@ -62,27 +61,35 @@ body {
 .appbar {
   background-color: black;
   display: grid;
-  padding-left: 1em;
-  grid-template-columns: repeat(3,1fr);
+  padding-left: 10px;
+  padding-right: 10px;
+  grid-template-columns: repeat(5,1fr);
   color: white;
   height: 35px;
-  font-size: 2em;
+  font-size: calc(20px);
+  grid-column-gap: 10px;
+  vertical-align: center;
 }
 
 .appbar-left {
-  justify-items: left;
+  text-align: left;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .appbar-right {
-  justify-items: right;
+  text-align: right;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
   .appbar-left:hover, .appbar-right:hover {
     cursor: pointer;
   }
 
-.title {
-  justify-items: center;
+.appbar-middle {
+  margin: auto auto;
+  grid-column: span 3;
 }
 
 a {
