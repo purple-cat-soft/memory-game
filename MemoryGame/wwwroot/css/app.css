@@ -38,7 +38,7 @@ body {
   color: #0b9dc1;
   font-family: "Open Sans", sans-serif;
   transition: 500ms;
-  font-size: 15px;
+  font-size: 25px;
   grid-row: span 1;
   aspect-ratio: 1/1;
 }
@@ -55,6 +55,10 @@ body {
 }
 
 .match {
+  background-color: grey;
+}
+
+.matrix-cell-disabled {
   background-color: grey;
 }
 

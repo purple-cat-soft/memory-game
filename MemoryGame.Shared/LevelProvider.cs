@@ -1,30 +1,59 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Blazored.LocalStorage;
 
 namespace MemoryGame.Shared
 {
   public class LevelProvider : ILevelProvider
   {
-    public LevelProvider()
+    private readonly ILocalStorageService mStorageService;
+
+    public LevelProvider(ILocalStorageService storageService)
     {
-      var levels = GetLevels().OrderBy(x=>x.Rows*x.Columns).ToArray();
-      int levelValue = 0;
+      mStorageService = storageService;
+    }
+
+    private async Task<Level[]> BuildLevels()
+    {
+      var maxLevelFinished = await GetMaxLevelFinished(mStorageService);
+      var levels = GetLevelsInternal().OrderBy(x => x.Rows * x.Columns).ToArray();
+      int levelValue = 1;
+
       foreach (Level level in levels)
       {
-        level.Value = ++levelValue;
+        level.SetValue(levelValue);
+
+        if (levelValue == 1 || levelValue <= maxLevelFinished + 1)
+        {
+          level.Enable();
+        }
+
+        levelValue++;
       }
 
-      Levels = levels;
+      return levels;
     }
 
-    public IList<Level> Levels { get; }
-
-    public Level GetLevel(int levelValue)
+    public async Task<Level> GetLevel(int levelValue)
     {
-      return Levels.Single(x => x.Value == levelValue);
+      var levels = await GetLevels();
+      return levels.Single(x => x.Value == levelValue);
     }
 
-    private IEnumerable<Level> GetLevels()
+    public Task<Level[]> GetLevels()
+    {
+      return BuildLevels();
+    }
+
+    public async Task LevelFinished(Level level)
+    {
+      int maxLevelFinished = await GetMaxLevelFinished(mStorageService);
+
+      if (level.Value > maxLevelFinished)
+      {
+        await SetMaxLevelFinished(mStorageService, level);
+      }
+    }
+
+    private IEnumerable<Level> GetLevelsInternal()
     {
       yield return new Level(2, 2);
       yield return new Level(3, 2);
@@ -42,6 +71,16 @@ namespace MemoryGame.Shared
       yield return new Level(10, 8);
       yield return new Level(10, 9);
       yield return new Level(10, 10);
+    }
+
+    private static Task<int> GetMaxLevelFinished(ILocalStorageService storageService)
+    {
+      return storageService.GetItemAsync<int>("Level").AsTask();
+    }
+
+    private static Task SetMaxLevelFinished(ILocalStorageService storageService, Level level)
+    {
+      return storageService.SetItemAsync("Level", level.Value).AsTask();
     }
   }
 }

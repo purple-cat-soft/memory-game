@@ -2,14 +2,17 @@
 @using System.Net.Http.Headers
 @inject ILocalStorageService localStore
 
-<div class="container">
-  <div class="matrix" style="grid-template-columns: repeat(@Columns,@GetCellSize());">
-    @foreach (var card in _model.Cards)
-    {
-      <div class="matrix-cell @GetCssClass(card)" @onclick="()=>OnClick(card)">@GetContent(card)</div>
-    }
+@if (IsInitialized == true)
+{
+  <div class="container">
+    <div class="matrix" style="grid-template-columns: repeat(@Columns, @GetCellSize());">
+      @foreach (var card in _model.Cards)
+      {
+        <div class="matrix-cell @GetCssClass(card)" @onclick="() => OnClick(card)">@GetContent(card)</div>
+      }
+    </div>
   </div>
-</div>
+}
 
 @code {
   CancellationTokenSource cancellationTokenSource;
@@ -22,8 +25,7 @@
 
     cancellationTokenSource = new CancellationTokenSource();
 
-    card.Revealed = true;
-    await _model.Match(cancellationTokenSource.Token);
+    await _model.Turn(card, cancellationTokenSource.Token);
   }
 
   private string GetCssClass(Card card)
@@ -43,7 +45,7 @@
 
   private string GetContent(Card card)
   {
-    return card.Revealed ? card.Text : string.Empty;
+    return card.Turned ? card.Text : string.Empty;
   }
 
   private string GetCellSize()

@@ -6,27 +6,26 @@ namespace MemoryGame.Models
 {
   public class GameModel
   {
-    private readonly Random _random = new Random(Environment.TickCount);
+    private readonly ILevelProvider mLevelProvider;
+    private readonly Level mLevel;
+    private static readonly Random _random = new Random(Environment.TickCount);
 
     public CardType CardType { get; private set; }
 
     public IList<Card> Cards { get; private set; }
 
-    public int AllowToReveal => 2;
-
     public int TimeCounter { get; set; }
-
-    public Timer DelayTimer { get; private set; }
 
     public Timer GameTimer { get; private set; }
 
-    public bool Started { get; set; }
+    public bool Started { get; private set; }
 
-    public GameModel(Level level, CardType cardType)
+    public bool Ended { get; private set; }
+
+    public GameModel(ILevelProvider levelProvider, Level level, CardType cardType)
     {
-      DelayTimer = new Timer(1000);
-      GameTimer = new Timer(1000);
-      Cards = new List<Card>();
+      mLevelProvider = levelProvider;
+      mLevel = level;
       Restart(level.Rows, level.Columns, cardType);
     }
 
@@ -34,17 +33,17 @@ namespace MemoryGame.Models
     {
       foreach (Card card in Cards)
       {
-        card.Revealed = false;
+        card.Turned = false;
       }
     }
 
     public void Restart(int rows, int columns, CardType cardType)
     {
       CardType = cardType;
-      DelayTimer = new Timer(1000);
       GameTimer = new Timer(1000);
       Cards = new List<Card>();
       Started = false;
+      Ended = false;
       TimeCounter = 0;
 
       Cards = FillCards(rows * columns, cardType).ToArray();
@@ -66,9 +65,25 @@ namespace MemoryGame.Models
       return cards.OrderBy(x => x.UniqueId).ToArray();
     }
 
-    public async Task Match(CancellationToken cancellationToken)
+    public async Task Turn(Card card,CancellationToken cancellationToken)
     {
-      var groups = Cards.Where(x => x.Revealed && !x.Matched).GroupBy(x => x.Value).Where(x => x.Count() == 2);
+      Started = true;
+
+      card.Turned = true;
+
+      await Evaluate(cancellationToken);
+
+      Ended = Cards.All(x => x.Turned);
+
+      if (Ended)
+      {
+        mLevelProvider.LevelFinished(mLevel);
+      }
+    }
+
+    private async Task Evaluate(CancellationToken cancellationToken)
+    {
+      var groups = Cards.Where(x => x.Turned && !x.Matched).GroupBy(x => x.Value).Where(x => x.Count() == 2);
 
       foreach (var group in groups)
       {
@@ -88,12 +103,12 @@ namespace MemoryGame.Models
 
     public void TryClear()
     {
-      var upturnedCards = Cards.Where(x => !x.Matched && x.Revealed).ToArray();
+      var upturnedCards = Cards.Where(x => !x.Matched && x.Turned).ToArray();
       if (upturnedCards.Count() > 1)
       {
         foreach (Card card in upturnedCards)
         {
-          card.Revealed = false;
+          card.Turned = false;
         }
       }
     }

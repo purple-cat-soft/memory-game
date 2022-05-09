@@ -13,9 +13,9 @@ public partial class LevelsPage
 
   private IList<Level> Levels { get; set; } = new List<Level>();
 
-  protected override void OnInitialized()
+  protected override async Task OnInitializedAsync()
   {
-    Levels = LevelProvider.Levels;
+    Levels =await LevelProvider.GetLevels();
   }
 
   private void OnLevelSelected(int level)

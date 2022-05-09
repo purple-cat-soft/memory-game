@@ -6,7 +6,7 @@
 
     public int Value { get; set; }
 
-    public bool Revealed { get; set; }
+    public bool Turned { get; set; }
 
     public bool Matched { get; set; }
 
@@ -17,7 +17,7 @@
       UniqueId = uniqueId;
       Text = text;
       Value = value;
-      Revealed = false;
+      Turned = false;
       Matched = false;
     }
   }

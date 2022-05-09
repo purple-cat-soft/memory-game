@@ -4,7 +4,14 @@
   <div class="matrix-levels">
     @foreach (var level in Levels)
     {
-      <div class="matrix-cell" @onclick="()=>OnLevelSelected(level.Value)">@level.Value</div>
+      if (level.IsEnabled)
+      {
+        <div class="matrix-cell" @onclick="() => OnLevelSelected(level.Value)">@level.Value</div>
+      }
+      else
+      {
+        <div class="matrix-cell matrix-cell-disabled">@level.Value</div>
+      }
     }
   </div>
 </div>

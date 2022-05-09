@@ -8,8 +8,19 @@
       Rows = rows;
     }
 
-    public int Value { get; set; }
+    public int Value { get; private set; }
     public int Columns { get; }
     public int Rows { get; }
+    public bool IsEnabled { get; private set; }
+
+    public void SetValue(int value)
+    {
+      Value = value;
+    }
+
+    public void Enable()
+    {
+      IsEnabled=true;
+    }
   }
 }

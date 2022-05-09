@@ -20,12 +20,16 @@ public partial class Board
   [Parameter]
   public string CardType { get; set; }
 
-  protected override void OnInitialized()
+  public bool IsInitialized { get; set; }
+
+  protected override async Task OnInitializedAsync()
   {
-    Level selectedLevel = LevelProvider.GetLevel(Level == 0 ? 1 : Level);
+    Level selectedLevel =await LevelProvider.GetLevel(Level == 0 ? 1 : Level);
     Rows = selectedLevel.Rows;
     Columns = selectedLevel.Columns;
 
-    _model = new GameModel(selectedLevel, Models.CardType.Number);
+    _model = new GameModel(LevelProvider, selectedLevel, Models.CardType.Number);
+
+    IsInitialized = true;
   }
 }
