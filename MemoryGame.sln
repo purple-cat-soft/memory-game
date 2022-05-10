@@ -5,9 +5,14 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame", "MemoryGame\MemoryGame.csproj", "{EF820772-8CCD-4797-B47D-20119A07E23B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.Shared", "MemoryGame.Shared\MemoryGame.Shared.csproj", "{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Shared", "MemoryGame.Shared\MemoryGame.Shared.csproj", "{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.Shared.UnitTests", "MemoryGame.Shared.UnitTests\MemoryGame.Shared.UnitTests.csproj", "{454AC4CF-5345-4CB9-8F22-1D2357553A79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Shared.UnitTests", "MemoryGame.Shared.UnitTests\MemoryGame.Shared.UnitTests.csproj", "{454AC4CF-5345-4CB9-8F22-1D2357553A79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E177B06-57E5-481C-B983-EC95F0F5CC01}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
