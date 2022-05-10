@@ -1,59 +1,16 @@
-﻿@using MemoryGame.Models
-@using System.Net.Http.Headers
+﻿@page "/index/{Level:int}"
+
+@using MemoryGame.Models
 @inject ILocalStorageService localStore
 
-@if (IsInitialized == true)
+@if (IsInitialized)
 {
   <div class="container">
     <div class="matrix" style="grid-template-columns: repeat(@Columns, @GetCellSize());">
-      @foreach (var card in _model.Cards)
+      @foreach (var card in mModel.Cards)
       {
         <div class="matrix-cell @GetCssClass(card)" @onclick="() => OnClick(card)">@GetContent(card)</div>
       }
     </div>
   </div>
-}
-
-@code {
-  CancellationTokenSource cancellationTokenSource;
-
-  private async Task OnClick(Card card)
-  {
-    cancellationTokenSource?.Cancel();
-
-    _model.TryClear();
-
-    cancellationTokenSource = new CancellationTokenSource();
-
-    await _model.Turn(card, cancellationTokenSource.Token);
-  }
-
-  private string GetCssClass(Card card)
-  {
-    if (card.Matched)
-    {
-      return "match";
-    }
-
-    //if (card.Revealed)
-    //{
-    //  return "upturned";
-    //}
-
-    return string.Empty;
-  }
-
-  private string GetContent(Card card)
-  {
-    return card.Turned ? card.Text : string.Empty;
-  }
-
-  private string GetCellSize()
-  {
-    var rows = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
-    var columns = (int)Math.Round(90m / Rows, MidpointRounding.ToZero);
-    int min = Math.Min(rows, columns);
-
-    return $"min(calc(100vh / {Rows} - 45px / {Rows} - 5px) , calc(100vw / {Columns} - 10px / {Columns} - 5px))";
-  }
 }

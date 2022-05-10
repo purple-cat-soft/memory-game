@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Diagnostics;
+using Blazored.LocalStorage;
 using MemoryGame.Shared;
 using Timer = System.Timers.Timer;
 
@@ -7,6 +8,7 @@ namespace MemoryGame.Models
   public class GameModel
   {
     private readonly ILevelProvider mLevelProvider;
+    private readonly IApplicationService mApplicationService;
     private readonly Level mLevel;
     private static readonly Random _random = new Random(Environment.TickCount);
 
@@ -17,24 +19,18 @@ namespace MemoryGame.Models
     public int TimeCounter { get; set; }
 
     public Timer GameTimer { get; private set; }
+    public Stopwatch Stopwatch { get; private set; }
 
     public bool Started { get; private set; }
 
     public bool Ended { get; private set; }
 
-    public GameModel(ILevelProvider levelProvider, Level level, CardType cardType)
+    public GameModel(ILevelProvider levelProvider, IApplicationService applicationService, Level level, CardType cardType)
     {
       mLevelProvider = levelProvider;
+      mApplicationService = applicationService;
       mLevel = level;
       Restart(level.Rows, level.Columns, cardType);
-    }
-
-    public void TurnBack()
-    {
-      foreach (Card card in Cards)
-      {
-        card.Turned = false;
-      }
     }
 
     public void Restart(int rows, int columns, CardType cardType)
@@ -65,19 +61,54 @@ namespace MemoryGame.Models
       return cards.OrderBy(x => x.UniqueId).ToArray();
     }
 
-    public async Task Turn(Card card,CancellationToken cancellationToken)
+    public async Task Turn(Card card, CancellationToken cancellationToken)
     {
-      Started = true;
+      if (Started == false)
+      {
+        Start();
+      }
 
       card.Turned = true;
-
-      await Evaluate(cancellationToken);
 
       Ended = Cards.All(x => x.Turned);
 
       if (Ended)
       {
-        mLevelProvider.LevelFinished(mLevel);
+        End();
+      }
+
+      await Evaluate(cancellationToken);
+    }
+
+    public void End()
+    {
+      mLevelProvider?.LevelFinished(mLevel);
+
+      Stopwatch?.Stop();
+      GameTimer?.Dispose();
+      GameTimer = null;
+      Stopwatch = null;
+    }
+
+    private void Start()
+    {
+      GameTimer = new Timer(250);
+      GameTimer.Start();
+      GameTimer.Elapsed += (_, _) => SetTitle();
+
+      Stopwatch = new Stopwatch();
+      Stopwatch.Start();
+
+      Started = true;
+
+      SetTitle();
+    }
+
+    private void SetTitle()
+    {
+      if (!Ended)
+      {
+        mApplicationService.SetTitle($"{Stopwatch.Elapsed.TotalMinutes:00}:{Stopwatch.Elapsed.Seconds:00}");
       }
     }
 
