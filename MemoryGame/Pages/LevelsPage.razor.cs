@@ -24,6 +24,6 @@ public partial class LevelsPage
 
   private void OnLevelSelected(int level)
   {
-    NavigationManager.NavigateTo($"/index/{level}");
+    NavigationManager.NavigateTo($"./index/{level}");
   }
 }
