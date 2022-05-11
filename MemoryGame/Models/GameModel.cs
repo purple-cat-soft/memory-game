@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Blazored.LocalStorage;
 using MemoryGame.Shared;
 using Timer = System.Timers.Timer;
 
@@ -10,16 +9,15 @@ namespace MemoryGame.Models
     private readonly ILevelProvider mLevelProvider;
     private readonly IApplicationService mApplicationService;
     private readonly Level mLevel;
+    private Timer mGameTimer;
+    private Stopwatch mStopwatch;
     private static readonly Random _random = new Random(Environment.TickCount);
-
+    
     public CardType CardType { get; private set; }
 
     public IList<Card> Cards { get; private set; }
 
     public int TimeCounter { get; set; }
-
-    public Timer GameTimer { get; private set; }
-    public Stopwatch Stopwatch { get; private set; }
 
     public bool Started { get; private set; }
 
@@ -36,7 +34,7 @@ namespace MemoryGame.Models
     public void Restart(int rows, int columns, CardType cardType)
     {
       CardType = cardType;
-      GameTimer = new Timer(1000);
+      mGameTimer = new Timer(1000);
       Cards = new List<Card>();
       Started = false;
       Ended = false;
@@ -84,20 +82,20 @@ namespace MemoryGame.Models
     {
       mLevelProvider?.LevelFinished(mLevel);
 
-      Stopwatch?.Stop();
-      GameTimer?.Dispose();
-      GameTimer = null;
-      Stopwatch = null;
+      mStopwatch?.Stop();
+      mGameTimer?.Dispose();
+      mGameTimer = null;
+      mStopwatch = null;
     }
 
     private void Start()
     {
-      GameTimer = new Timer(250);
-      GameTimer.Start();
-      GameTimer.Elapsed += (_, _) => SetTitle();
+      mGameTimer = new Timer(500);
+      mGameTimer.Start();
+      mGameTimer.Elapsed += (_, _) => SetTitle();
 
-      Stopwatch = new Stopwatch();
-      Stopwatch.Start();
+      mStopwatch = new Stopwatch();
+      mStopwatch.Start();
 
       Started = true;
 
@@ -108,7 +106,7 @@ namespace MemoryGame.Models
     {
       if (!Ended)
       {
-        mApplicationService.SetTitle($"{Stopwatch.Elapsed.TotalMinutes:00}:{Stopwatch.Elapsed.Seconds:00}");
+        mApplicationService.SetTitle($"{mStopwatch.Elapsed.TotalMinutes:00}:{mStopwatch.Elapsed.Seconds:00}");
       }
     }
 
