@@ -18,7 +18,7 @@ public partial class LevelsPage
 
   protected override async Task OnInitializedAsync()
   {
-    ApplicationService.SetTitle("Levels");
+    ApplicationService.SetTitle("Select the level");
     Levels =await LevelProvider.GetLevels();
   }
 
