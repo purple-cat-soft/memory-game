@@ -8,7 +8,7 @@
   "resources": {
     "assembly": {
       "Blazored.LocalStorage.dll": "sha256-6RRoYeDP3d0xabXmcCMF66wXeJlXVPem28Trs8sQiis=",
-      "MemoryGame.dll": "sha256-6rC\/ZdoXPh\/qWZwpxsCCNToFMc38W3qFThR5Gkttdz4=",
+      "MemoryGame.dll": "sha256-C7KfufCnwwX4MPJVY5+4qWdAPwv15TB5XC5t4O15N+A=",
       "MemoryGame.Shared.dll": "sha256-bDoyZ1p5HOm+AdwaxO0hBWE2sb9x6hEs4HITNzFadfA=",
       "Microsoft.AspNetCore.Components.dll": "sha256-f4OS8rjteo2\/vBZhBuGHBApVsBqN3bVkjhuK+4cccKI=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-JrcahE7oAMMG1NZqgJfAQc1mtGDS9xAO6cDBWxDLgoY=",
