@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame", "MemoryGame\MemoryGame.csproj", "{EF820772-8CCD-4797-B47D-20119A07E23B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Web", "MemoryGame\MemoryGame.Web.csproj", "{EF820772-8CCD-4797-B47D-20119A07E23B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.Shared", "MemoryGame.Shared\MemoryGame.Shared.csproj", "{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.MAUI", "MemoryGame.MAUI\MemoryGame.MAUI.csproj", "{A4287093-5FC7-42A3-80C6-FC853A2E9E47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.Shared.UnitTests", "MemoryGame.Shared.UnitTests\MemoryGame.Shared.UnitTests.csproj", "{454AC4CF-5345-4CB9-8F22-1D2357553A79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "MauiApp1\MauiApp1.csproj", "{094E7AC1-C88B-4A64-ABE9-236B36A56458}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Razor", "MemoryGame.Razor\MemoryGame.Razor.csproj", "{C21A21F7-1203-4086-A98D-9EEF1065BAE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,22 @@ Global
 		{EF820772-8CCD-4797-B47D-20119A07E23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF820772-8CCD-4797-B47D-20119A07E23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF820772-8CCD-4797-B47D-20119A07E23B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0FB2620-2708-4859-9F0D-EC1BDC2AA533}.Release|Any CPU.Build.0 = Release|Any CPU
-		{454AC4CF-5345-4CB9-8F22-1D2357553A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{454AC4CF-5345-4CB9-8F22-1D2357553A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{454AC4CF-5345-4CB9-8F22-1D2357553A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{454AC4CF-5345-4CB9-8F22-1D2357553A79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{094E7AC1-C88B-4A64-ABE9-236B36A56458}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C21A21F7-1203-4086-A98D-9EEF1065BAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21A21F7-1203-4086-A98D-9EEF1065BAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C21A21F7-1203-4086-A98D-9EEF1065BAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C21A21F7-1203-4086-A98D-9EEF1065BAE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
