@@ -20,6 +20,6 @@ public partial class MainLayout
 
   private void OnTitleChanged(object sender, EventArgs e)
   {
-    StateHasChanged();
+    InvokeAsync(() => StateHasChanged());
   }
 }

@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Web", "MemoryGam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.MAUI", "MemoryGame.MAUI\MemoryGame.MAUI.csproj", "{A4287093-5FC7-42A3-80C6-FC853A2E9E47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Razor", "MemoryGame\MemoryGame.Razor.csproj", "{C21A21F7-1203-4086-A98D-9EEF1065BAE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryGame.Razor", "MemoryGame.Razor\MemoryGame.Razor.csproj", "{C21A21F7-1203-4086-A98D-9EEF1065BAE8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{2BA76C10-7045-4C30-8DB4-D199A13D5ACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF820772-8CCD-4797-B47D-20119A07E23B} = {2BA76C10-7045-4C30-8DB4-D199A13D5ACD}
+		{A4287093-5FC7-42A3-80C6-FC853A2E9E47} = {2BA76C10-7045-4C30-8DB4-D199A13D5ACD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE3863FC-15DB-45C0-B773-5395D878F818}

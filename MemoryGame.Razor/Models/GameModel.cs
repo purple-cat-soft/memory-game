@@ -32,7 +32,7 @@ namespace MemoryGame.Models
 
     public bool IsStarted { get; private set; }
 
-    public bool Ended { get; private set; }
+    public bool IsEnded { get; private set; }
 
     public void Restart(int rows, int columns, CardType cardType)
     {
@@ -40,7 +40,7 @@ namespace MemoryGame.Models
       mGameTimer = new Timer(1000);
       Cards = new List<Card>();
       IsStarted = false;
-      Ended = false;
+      IsEnded = false;
       TimeCounter = 0;
 
       Cards = FillCards(rows * columns, cardType).ToArray();
@@ -74,9 +74,9 @@ namespace MemoryGame.Models
 
       card.Turned = true;
 
-      Ended = Cards.All(x => x.Turned);
+      IsEnded = Cards.All(x => x.Turned);
 
-      if (Ended)
+      if (IsEnded)
       {
         End();
       }
@@ -100,21 +100,22 @@ namespace MemoryGame.Models
 
     private void Start()
     {
-      mGameTimer = new Timer(500);
-      mGameTimer.Start();
-      mGameTimer.Elapsed += (_, _) => SetTitle();
+      IsStarted = true;
+      IsEnded = false;
 
       mStopwatch = new Stopwatch();
       mStopwatch.Start();
 
-      IsStarted = true;
+      mGameTimer = new Timer(500);
+      mGameTimer.Elapsed += (_, _) => SetTitle();
+      mGameTimer.Start();
 
       SetTitle();
     }
 
     private void SetTitle()
     {
-      if (!Ended)
+      if (!IsEnded)
       {
         mApplicationService.SetTitle($"{mStopwatch.Elapsed.TotalMinutes:00}:{mStopwatch.Elapsed.Seconds:00} \\ {mGameCount}");
       }
