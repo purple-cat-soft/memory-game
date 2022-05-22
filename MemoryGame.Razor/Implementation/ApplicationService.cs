@@ -6,7 +6,7 @@ public class ApplicationService : IApplicationService
   
   public ApplicationService()
   {
-    Title = "Memory Game";
+    Title = "Select the level";
   }
 
   public string Title { get; set; }
