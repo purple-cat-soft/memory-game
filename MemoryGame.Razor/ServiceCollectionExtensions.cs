@@ -12,7 +12,9 @@ namespace MemoryGame.Razor
       services.AddBlazoredLocalStorage();
       services.AddScoped<ILevelProvider, LevelProvider>();
       services.AddScoped<IApplicationService, ApplicationService>();
-      services.AddScoped<ICardFactory, CardFactory>();
+      services.AddScoped<ICardFactoryProvider, CardFactoryProvider>();
+      services.AddScoped<ICardFactory, NumbersCardFactory>();
+      services.AddScoped<ICardFactory, OperationsCardFactory>();
     }
   }
 }

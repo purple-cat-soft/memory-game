@@ -17,7 +17,7 @@ public partial class Board : IDisposable
   public IApplicationService ApplicationService { get; set; }
 
   [Inject]
-  public ICardFactory CardFactory { get; set; }
+  public ICardFactoryProvider CardFactory { get; set; }
 
   [Parameter]
   public int Level { get; set; }
@@ -33,7 +33,7 @@ public partial class Board : IDisposable
     Rows = selectedLevel.Rows;
     Columns = selectedLevel.Columns;
 
-    mModel = new GameModel(LevelProvider, ApplicationService, CardFactory, selectedLevel, Models.CardType.Number);
+    mModel = new GameModel(LevelProvider, ApplicationService, CardFactory, selectedLevel, Models.CardType.Operations);
 
     IsInitialized = true;
   }

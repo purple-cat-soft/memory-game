@@ -2,7 +2,7 @@
 
 namespace MemoryGame.Razor.Implementation
 {
-  public interface ICardFactory
+  public interface ICardFactoryProvider
   {
     IList<Card> GenerateCards(CardType cardType, int numberOfCards);
   }

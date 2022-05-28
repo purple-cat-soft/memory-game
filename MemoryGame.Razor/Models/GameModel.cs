@@ -9,14 +9,14 @@ namespace MemoryGame.Models
   {
     private readonly ILevelProvider mLevelProvider;
     private readonly IApplicationService mApplicationService;
-    private readonly ICardFactory mCardFactory;
+    private readonly ICardFactoryProvider mCardFactory;
     private readonly Level mLevel;
 
     private Timer mGameTimer;
     private Stopwatch mStopwatch;
     private int mGameCount;
 
-    public GameModel(ILevelProvider levelProvider, IApplicationService applicationService, ICardFactory cardFactory, Level level, CardType cardType)
+    public GameModel(ILevelProvider levelProvider, IApplicationService applicationService, ICardFactoryProvider cardFactory, Level level, CardType cardType)
     {
       mLevelProvider = levelProvider;
       mApplicationService = applicationService;
