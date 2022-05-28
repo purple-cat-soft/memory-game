@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using MemoryGame.Razor.Implementation;
 using MemoryGame.Shared;
 using Timer = System.Timers.Timer;
 
@@ -6,20 +7,20 @@ namespace MemoryGame.Models
 {
   public class GameModel
   {
-    private static readonly Random _random = new Random(Environment.TickCount);
-
     private readonly ILevelProvider mLevelProvider;
     private readonly IApplicationService mApplicationService;
+    private readonly ICardFactory mCardFactory;
     private readonly Level mLevel;
 
     private Timer mGameTimer;
     private Stopwatch mStopwatch;
     private int mGameCount;
-    
-    public GameModel(ILevelProvider levelProvider, IApplicationService applicationService, Level level, CardType cardType)
+
+    public GameModel(ILevelProvider levelProvider, IApplicationService applicationService, ICardFactory cardFactory, Level level, CardType cardType)
     {
       mLevelProvider = levelProvider;
       mApplicationService = applicationService;
+      mCardFactory = cardFactory;
       mLevel = level;
       Restart(level.Rows, level.Columns, cardType);
     }
@@ -43,23 +44,7 @@ namespace MemoryGame.Models
       IsEnded = false;
       TimeCounter = 0;
 
-      Cards = FillCards(rows * columns, cardType).ToArray();
-    }
-
-    private IList<Card> FillCards(int numberOfCards, CardType cardType)
-    {
-      var cards = new List<Card>();
-
-      if (cardType == CardType.Number)
-      {
-        for (var i = 0; i < numberOfCards / 2; i++)
-        {
-          cards.Add(new Card(_random.NextInt64(), i.ToString(), i));
-          cards.Add(new Card(_random.NextInt64(), i.ToString(), i));
-        }
-      }
-
-      return cards.OrderBy(x => x.UniqueId).ToArray();
+      Cards = mCardFactory.GenerateCards(cardType, rows * columns).ToArray();
     }
 
     public async Task Turn(Card card, CancellationToken cancellationToken)

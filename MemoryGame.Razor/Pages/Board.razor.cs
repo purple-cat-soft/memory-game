@@ -1,4 +1,5 @@
 using MemoryGame.Models;
+using MemoryGame.Razor.Implementation;
 using MemoryGame.Shared;
 using Microsoft.AspNetCore.Components;
 
@@ -15,6 +16,9 @@ public partial class Board : IDisposable
   [Inject]
   public IApplicationService ApplicationService { get; set; }
 
+  [Inject]
+  public ICardFactory CardFactory { get; set; }
+
   [Parameter]
   public int Level { get; set; }
 
@@ -29,7 +33,7 @@ public partial class Board : IDisposable
     Rows = selectedLevel.Rows;
     Columns = selectedLevel.Columns;
 
-    mModel = new GameModel(LevelProvider, ApplicationService, selectedLevel, Models.CardType.Number);
+    mModel = new GameModel(LevelProvider, ApplicationService, CardFactory, selectedLevel, Models.CardType.Number);
 
     IsInitialized = true;
   }

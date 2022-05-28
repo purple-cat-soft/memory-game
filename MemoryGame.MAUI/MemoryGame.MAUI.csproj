@@ -31,6 +31,14 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>..\misc\MemoryGame.Math.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>emma@123CZ</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>MemoryGame.Math</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>emma@123CZ</AndroidSigningKeyPass>
+  </PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />

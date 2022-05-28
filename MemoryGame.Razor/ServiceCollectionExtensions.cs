@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using MemoryGame.Razor.Implementation;
 using MemoryGame.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ namespace MemoryGame.Razor
       services.AddBlazoredLocalStorage();
       services.AddScoped<ILevelProvider, LevelProvider>();
       services.AddScoped<IApplicationService, ApplicationService>();
+      services.AddScoped<ICardFactory, CardFactory>();
     }
   }
 }
