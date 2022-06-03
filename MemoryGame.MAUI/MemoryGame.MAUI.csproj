@@ -13,15 +13,15 @@
 		<EnableDefaultCssItems>false</EnableDefaultCssItems>
 
 		<!-- Display name -->
-		<ApplicationTitle>MemoryGame.MAUI</ApplicationTitle>
+		<ApplicationTitle>Math Memory Game</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.memorygame.maui</ApplicationId>
 		<ApplicationIdGuid>33F9A338-AF0F-4D34-B6BB-6036F52AF3AA</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>2.0</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -33,7 +33,7 @@
 
   <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
     <AndroidKeyStore>True</AndroidKeyStore>
-    <AndroidSigningKeyStore>..\misc\MemoryGame.Math.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>..\misc\Math\MemoryGame.Math.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>emma@123CZ</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>MemoryGame.Math</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>emma@123CZ</AndroidSigningKeyPass>
@@ -41,10 +41,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\mathlogo.png" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\mathsplashscreen.png" BaseSize="128,128" />
 
 		<!-- Images -->
 
