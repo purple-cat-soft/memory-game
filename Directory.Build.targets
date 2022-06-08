@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="6.0.5" />
+    <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
+    <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.3" PrivateAssets="all" />
+    <PackageReference Update="Blazored.LocalStorage" Version="4.2.0" />
+  </ItemGroup>
+</Project>

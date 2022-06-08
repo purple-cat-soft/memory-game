@@ -6,7 +6,14 @@
     {
       if (level.IsEnabled)
       {
-        <div class="matrix-cell" @onclick="() => OnLevelSelected(level.Value)">@level.Value</div>
+        <div class="matrix-cell" @onclick="() => OnLevelSelected(level.Value)">
+          <div style="text-align:center">
+            @level.Value 
+            <br> 
+            <span style="color:gray;font-size:15px;">@level.HighScore</span>
+            
+          </div>
+        </div>
       }
       else
       {

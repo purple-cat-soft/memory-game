@@ -71,7 +71,7 @@ namespace MemoryGame.Models
 
     public void End()
     {
-      mLevelProvider?.LevelFinished(mLevel);
+      mLevelProvider?.LevelFinished(mLevel, mStopwatch.Elapsed);
       Cancel();
     }
 
