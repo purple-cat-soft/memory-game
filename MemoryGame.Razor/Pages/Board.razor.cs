@@ -33,7 +33,7 @@ public partial class Board : IDisposable
     Rows = selectedLevel.Rows;
     Columns = selectedLevel.Columns;
 
-    mModel = new GameModel(LevelProvider, ApplicationService, CardFactory, selectedLevel, Models.CardType.Numbers);
+    mModel = new GameModel(LevelProvider, ApplicationService, CardFactory, selectedLevel, Models.CardType.Operations);
 
     IsInitialized = true;
   }
